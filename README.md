@@ -1,7 +1,9 @@
 # Introduction
 This repository is a work in progress for an open source AES unit designed in SystemVerilog. More specifically,
 this design is an implementation of the [FIPS 197 Standard](https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf) version
-of the [Rijndael cipher](https://csrc.nist.gov/csrc/media/projects/cryptographic-standards-and-guidelines/documents/aes-development/rijndael-ammended.pdf).
+of the [Rijndael cipher](https://csrc.nist.gov/csrc/media/projects/cryptographic-standards-and-guidelines/documents/aes-development/rijndael-ammended.pdf). 
+The goal of this implementation is to create a skeleton for other researchers to expand on and more easily test different hypothesis in a hardware setting.
+As this repository matures, I hope to add comparisons of different available logic optimizations for AES as well as create a basis for rapid testing of the functionality and efficacy of advancements to the AES hardware design. As opposed to other implementations, this implementation is RTL/synthesis friendly.  It also tries to create an easy to understand implementation and testbenching system in SV.  Some of the comparisons of this unit are in the paper listed in the README.
 
 
 
