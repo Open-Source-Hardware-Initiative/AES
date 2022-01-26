@@ -43,3 +43,7 @@ Next, you will want to run the testbench using the do file macro in that directo
 This repository contains an open source AES design as presented in:
 
 R. L. Swann and J. E. Stine, "A Reconfigurable Architecture for Improvement and Optimization of Advanced Encryption Standard Hardware, " 55th Annual Asilomar Conference on Signals, Systems, and Computers, 2021 (in press).
+
+
+## Referenced Projects
+https://github.com/secworks/aes
