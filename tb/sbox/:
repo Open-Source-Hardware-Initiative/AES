@@ -14,7 +14,6 @@ module sbox_tb();
 	//Test Vector Logic
 	logic [15:0] sub_mem [255:0];
 	logic [7:0] expected_out;
-	logic clk;
 	
 	aes_sbox dut(.in(in),
 		     .out(out));
@@ -28,9 +27,9 @@ module sbox_tb();
 
 	initial
 	  begin
-	    $readmemh("tv/tv.txt",sub_mem);
+	    $readmemh("tv/tv.txt",sub_mem)
 	    in = sub_mem[0][15:8];
-		expected_out = sub_mem[0][7:0];
+		expected_out = sub_mem[0][7:0]
 		i = 1;
 	  end
 
@@ -40,14 +39,12 @@ module sbox_tb();
 		if(out != expected_out)
 		  begin
 			$display("Test Failed!\nInput : %h\nExpected Output : %h\nDUT Output : %h",in,expected_out,out);
-			$stop;
 		  end
 		
 		if(i == 255)
 		  begin
-			$display("Completed All Vectors!");
-			$stop;
+			$display("Test Complete")
 		  end
-		i = i+1;
 	  end
+
 endmodule
