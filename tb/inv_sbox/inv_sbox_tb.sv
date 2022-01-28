@@ -1,9 +1,9 @@
 /*
 * Contact : swann.l.ryan@gmail.com
-* Purpose : This file contains an exhaustive Substitution Box Test
+* Purpose : This file contains an exhaustive Inverse Substitution Box Test
 */
 
-module sbox_tb();
+module inv_sbox_tb();
 
 
 	logic [7:0] in;
@@ -16,7 +16,7 @@ module sbox_tb();
 	logic [7:0] expected_out;
 	logic clk;
 	
-	aes_sbox dut(.in(in),
+	aes_inv_sbox dut(.in(in),
 		     .out(out));
 	
 	//Set CLK

@@ -24,17 +24,17 @@ if [file exists work] {
 }
 vlib work
 # compile source files
-vlog ../../hdl/aes_sbox.sv ../../hdl/aes_sbox_word.sv ./sbox_word_tb.sv
+vlog ../../hdl/aes_inv_sbox.sv ./inv_sbox_tb.sv
 
 # start and run simulation
-vsim -voptargs=+acc sbox_word_tb
+vsim -voptargs=+acc inv_sbox_tb
 
 #view list
 view wave
 
 -- display input and output signals as hexidecimal values
 # Diplays All Signals recursively
-#add wave -hex -r /rotTest/*
+add wave -hex -r /inv_sbox_tb/*
 
 
 -- Set Wave Output Items 
