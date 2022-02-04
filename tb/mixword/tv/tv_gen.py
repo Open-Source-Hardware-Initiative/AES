@@ -1,5 +1,5 @@
 #This file contains a test vector generator for the mixword function
-
+import random
 
 #Rijndael Galois mult by 2 LUT
 gm2 = [0x00,0x02,0x04,0x06,0x08,0x0a,0x0c,0x0e,0x10,0x12,0x14,0x16,0x18,0x1a,0x1c,0x1e,
@@ -91,5 +91,17 @@ def mixword(word_in):
 #Number of vectors to generate
 tvAmount = 1000
 
+#Open test vector file
+f = open("tv.txt","w")
 
-for i in range(1000):
+for i in range(tvAmount):
+    word_in = random.randint(1000,2**32-1)
+    output = mixword(word_in)
+    
+    #Convert to binary
+    word_in_hex = hex(word_in)[2:].zfill(8)
+    out_hex = hex(output)[2:].zfill(8)
+    
+    #Write to test vector file
+    f.write("%s_%s\n" % (out_hex,word_in_hex))   
+    
