@@ -24,7 +24,7 @@ if [file exists work] {
 }
 vlib work
 # compile source files
-vlog ../../hdl/aes_roundkey.sv ../../hdl/aes_key_xor.sv ../../hdl/aesRotate.sv ../../hdl/aes_sbox.sv ../../hdl/aes_sbox_word.sv ./roundkey_tb.sv
+vlog ../../../hdl/aes_roundkey.sv ../../../hdl/aes_key_xor.sv ../../../hdl/aesRotate.sv ../../../hdl/aes_sbox.sv ../../../hdl/aes_sbox_word.sv ./roundkey_tb.sv
 
 # start and run simulation
 #vsim -voptargs=+acc top

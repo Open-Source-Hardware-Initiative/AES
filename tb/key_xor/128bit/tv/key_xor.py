@@ -15,7 +15,6 @@ def key_xor(key,sbox_out,roundNum):
     #Get rcon from table and bitshift by 24
     rcon = rcon_128[roundNum-1] << 24
     
-    print(hex(rcon))
     
     #Recombine
     out_w0 = sbox_out ^ key_bin_split[3] ^ key_bin_split[2] ^ key_bin_split[1] ^ key_bin_split[0] ^ rcon
@@ -25,7 +24,7 @@ def key_xor(key,sbox_out,roundNum):
     
 
     
-    return int(hex(out_w3)[2:] + hex(out_w2)[2:] + hex(out_w1)[2:] + hex(out_w0)[2:],16)
+    return int(hex(out_w3)[2:].zfill(8) + hex(out_w2)[2:].zfill(8) + hex(out_w1)[2:].zfill(8) + hex(out_w0)[2:].zfill(8),16)
 
     
 #Number of vectors to generate
@@ -39,11 +38,16 @@ for i in range(numbervecs):
     inputKey = random.randint(1000,2**128-1)
     sbox_out = random.randint(1000,2**32-1)
     roundNum = random.randint(1,9)
+    result = key_xor(inputKey,sbox_out,roundNum)
+    
+    
     
     #Convert to hex
     inputKey_hex = hex(inputKey)[2:].zfill(32)
     sbox_out_hex = hex(sbox_out)[2:].zfill(8)
     roundnum_hex     = hex(roundNum)[2:]
+    result_hex = hex(result)[2:].zfill(32)
     
     
-    tvFile.write("%s_%s_%s\n" % (inputKey_hex,sbox_out_hex,roundnum_hex))
+    
+    tvFile.write("%s_%s_%s_%s\n" % (inputKey_hex,sbox_out_hex,roundnum_hex,result_hex))

@@ -24,18 +24,17 @@ if [file exists work] {
 }
 vlib work
 # compile source files
-vlog ../../hdl/aes_key_xor.sv ./key_xor_tb.sv
+vlog ../../../hdl/aes_key_xor.sv ./key_xor_vec.sv
 
 # start and run simulation
-#vsim -voptargs=+acc top
-vsim -voptargs=+acc keyxor_tb
+vsim -voptargs=+acc key_xor_tb
 
 #view list
 view wave
 
 -- display input and output signals as hexidecimal values
 # Diplays All Signals recursively
-add wave -hex -r /keyxor_tb/*
+add wave -hex -r /key_xor_tb/*
 
 
 -- Set Wave Output Items 
