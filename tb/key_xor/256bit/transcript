@@ -14,7 +14,7 @@
 # //
 # do test_key_xor_vec.do
 # QuestaSim-64 vlog 2021.2 Compiler 2021.04 Apr 14 2021
-# Start time: 13:49:13 on Feb 10,2022
+# Start time: 13:59:20 on Feb 10,2022
 # vlog -reportprogress 300 ../../../hdl/aes_key_xor.sv ./key_xor_vec.sv 
 # -- Compiling module aes_key_xor
 # -- Compiling module rcon_lut_128
@@ -22,16 +22,16 @@
 # -- Compiling module key_xor_tb
 # 
 # Top level modules:
+# 	rcon_lut_256
 # 	key_xor_tb
-# End time: 13:49:13 on Feb 10,2022, Elapsed time: 0:00:00
+# End time: 13:59:21 on Feb 10,2022, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
 # vsim -voptargs="+acc" key_xor_tb 
-# Start time: 13:49:13 on Feb 10,2022
+# Start time: 13:59:21 on Feb 10,2022
 # ** Note: (vsim-3812) Design is being optimized...
 # Loading sv_std.std
 # Loading work.key_xor_tb(fast)
 # Loading work.aes_key_xor(fast)
-# Loading work.rcon_lut_256(fast)
 # Loading work.rcon_lut_128(fast)
 # .main_pane.wave.interior.cs.body.pw.wf
 # -----------------------------
@@ -46,5 +46,5 @@
 # ** Note: $stop    : ./key_xor_vec.sv(71)
 #    Time: 99995 ns  Iteration: 1  Instance: /key_xor_tb
 # Break in Module key_xor_tb at ./key_xor_vec.sv line 71
-# End time: 13:49:21 on Feb 10,2022, Elapsed time: 0:00:08
+# End time: 13:59:27 on Feb 10,2022, Elapsed time: 0:00:06
 # Errors: 0, Warnings: 0
