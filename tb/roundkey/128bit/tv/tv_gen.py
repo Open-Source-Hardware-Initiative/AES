@@ -92,9 +92,37 @@ def key_xor(key,sbox_out,roundNum):
     out_w2 = sbox_out ^ key_bin_split[1] ^ key_bin_split[0] ^ rcon
     out_w3 = sbox_out ^ key_bin_split[0] ^ rcon
     
+    
+    return int(hex(out_w3)[2:].zfill(8) + hex(out_w2)[2:].zfill(8) + hex(out_w1)[2:].zfill(8) + hex(out_w0)[2:].zfill(8),16)
+    
+
+def gen_roundkey(prev_roundkey,roundNum):
+    key_bin = bin(prev_roundkey)[2:].zfill(128)
+    key_bin_split =  [int(key_bin[i:i+32],2) for i in range(0, len(key_bin), 32)]
+    lowestWord = key_bin_split[3]
+    
+    #Run lowest word through rotate
+    rotWord = aesRotate(lowestWord,0)
+    #Substitute rotated word
+    subWord = aes_subword(rotWord)
+    #Run key through key_xor
+    return key_xor(prev_roundkey,subWord,roundNum)
 
     
     return int(hex(out_w3)[2:].zfill(8) + hex(out_w2)[2:].zfill(8) + hex(out_w1)[2:].zfill(8) + hex(out_w0)[2:].zfill(8),16)
+
+
+
+
+
+key = 0x0
+round = 1
+rk1 = (gen_roundkey(key,round))
+rk2 = (gen_roundkey(rk1,2))
+
+print(hex(rk2))
+
+
 
 
 
