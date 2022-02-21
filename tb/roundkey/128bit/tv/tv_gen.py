@@ -1,4 +1,4 @@
-
+import random
 
 #128 bit key round constants
 rcon_128 = [0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1B,0x36]
@@ -111,16 +111,34 @@ def gen_roundkey(prev_roundkey,roundNum):
     
     return int(hex(out_w3)[2:].zfill(8) + hex(out_w2)[2:].zfill(8) + hex(out_w1)[2:].zfill(8) + hex(out_w0)[2:].zfill(8),16)
 
+#Number of keys to generate
+numKeys = 1000
+
+#File to write vectors to
+tvFile = open("tv.txt","w")
+
+for i in range(1000//10):
+    #Set prevkey to starting key
+    prevKey = random.randint(1000,2**128-1)
+    for round in range(1,11):
+        #Generate output
+        roundKey = gen_roundkey(prevKey,round)
 
 
+        #Convert values to hex        
+        prevKey_hex = hex(prevKey)[2:].zfill(32)
+        roundKey_hex = hex(roundKey)[2:].zfill(32)
+        round_hex = hex(round)[2:].zfill(1)
+            
+        #Set prevkey to current roundkey
+        prevKey = roundKey
+        
+        #Write out hex value to file
+        tvFile.write("%s_%s_%s\n" % (round_hex,prevKey_hex,roundKey_hex))
+        
+        
 
 
-key = 0x0
-round = 1
-rk1 = (gen_roundkey(key,round))
-rk2 = (gen_roundkey(rk1,2))
-
-print(hex(rk2))
 
 
 
