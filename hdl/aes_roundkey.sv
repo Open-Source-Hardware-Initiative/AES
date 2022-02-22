@@ -4,6 +4,11 @@
 *	    of shift rows, byte substitution, and key XOR
 */
 
+`include "./aesRotate.sv"
+`include "./aes_sbox_word.sv"
+`include "./aes_sbox.sv"
+`include "aes_key_xor.sv"
+
 module aes_roundkey(input logic [3:0] RD,
 		    input logic [1:0] mode,
 		    input logic [127:0] prev_key,
