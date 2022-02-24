@@ -110,7 +110,6 @@ def gen_roundkey(prev_roundkey,cur_roundkey,roundNum):
     
     #Run lowest word through rotate
     rotWord = aesRotate(lowestWord,int(bin(roundNum)[-1],2))
-    print(hex(rotWord))
     #Substitute rotated word
     subWord = aes_subword(rotWord)
     #Run key through key_xor
@@ -142,8 +141,13 @@ for i in range(1000//10):
         #Convert values to hex        
         prevKey_hex = hex(prevKey)[2:].zfill(32)
         roundKey_hex = hex(roundKey)[2:].zfill(32)
+        currentKey_hex = hex(currentKey)[2:].zfill(32)
         round_hex = hex(round)[2:].zfill(1)
-            
+
+        #Write out hex value to file
+        tvFile.write("%s_%s_%s_%s\n" % (round_hex,prevKey_hex,currentKey_hex,roundKey_hex))
+
+         
         #Set prevkey to current roundkey
         prevKey = currentKey
         currentKey = roundKey
@@ -151,8 +155,7 @@ for i in range(1000//10):
         
         
         
-        #Write out hex value to file
-        tvFile.write("%s_%s_%s\n" % (round_hex,prevKey_hex,roundKey_hex))
+
         
         
 

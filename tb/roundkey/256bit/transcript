@@ -12,10 +12,10 @@
 # //  is prohibited from disclosure under the Trade Secrets Act,
 # //  18 U.S.C. Section 1905.
 # //
-# do roundkey_test.do
+# do test_roundkey_vec.do
 # QuestaSim-64 vlog 2021.2 Compiler 2021.04 Apr 14 2021
-# Start time: 16:11:15 on Feb 23,2022
-# vlog -reportprogress 300 ../../../hdl/aes_roundkey.sv ../../../hdl/aes_key_xor.sv ../../../hdl/aesRotate.sv ../../../hdl/aes_sbox.sv ../../../hdl/aes_sbox_word.sv ./roundkey_tb.sv 
+# Start time: 13:03:36 on Feb 24,2022
+# vlog -reportprogress 300 ./roundkey_vec.sv 
 # -- Compiling module aesRotateWord
 # -- Compiling module aes_sbox_word
 # -- Compiling module aes_sbox
@@ -23,28 +23,18 @@
 # -- Compiling module rcon_lut_128
 # -- Compiling module aes_roundkey
 # -- Compiling module aes_roundkey_128
-# -- Compiling module aes_key_xor
-# ** Warning: ../../../hdl/aes_key_xor.sv(14): (vlog-2275) Existing module 'aes_key_xor' at line 14 will be overwritten.
-# -- Compiling module rcon_lut_128
-# ** Warning: ../../../hdl/aes_key_xor.sv(66): (vlog-2275) Existing module 'rcon_lut_128' at line 66 will be overwritten.
-# -- Compiling module aesRotateWord
-# ** Warning: ../../../hdl/aesRotate.sv(7): (vlog-2275) Existing module 'aesRotateWord' at ../../../hdl/./aesRotate.sv(7) will be overwritten.
-# -- Compiling module aes_sbox
-# ** Warning: ../../../hdl/aes_sbox.sv(6): (vlog-2275) Existing module 'aes_sbox' at ../../../hdl/./aes_sbox.sv(6) will be overwritten.
-# -- Compiling module aes_sbox_word
-# ** Warning: ../../../hdl/aes_sbox_word.sv(8): (vlog-2275) Existing module 'aes_sbox_word' at ../../../hdl/./aes_sbox_word.sv(8) will be overwritten.
-# -- Compiling module rdkey_tb
+# -- Compiling module roundkey_tb
 # 
 # Top level modules:
 # 	aes_roundkey_128
-# 	rdkey_tb
-# End time: 16:11:15 on Feb 23,2022, Elapsed time: 0:00:00
-# Errors: 0, Warnings: 5
-# vsim -voptargs="+acc" rdkey_tb 
-# Start time: 16:11:15 on Feb 23,2022
+# 	roundkey_tb
+# End time: 13:03:36 on Feb 24,2022, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -voptargs="+acc" roundkey_tb 
+# Start time: 13:03:36 on Feb 24,2022
 # ** Note: (vsim-3812) Design is being optimized...
 # Loading sv_std.std
-# Loading work.rdkey_tb(fast)
+# Loading work.roundkey_tb(fast)
 # Loading work.aes_roundkey(fast)
 # Loading work.aesRotateWord(fast)
 # Loading work.aes_sbox_word(fast)
@@ -52,9 +42,17 @@
 # Loading work.aes_key_xor(fast)
 # Loading work.rcon_lut_128(fast)
 # .main_pane.wave.interior.cs.body.pw.wf
-# Generated all round keys correctly for key : 0000000000000000000000000000000000000000000000000000000000000001
-# ** Note: $stop    : ./roundkey_tb.sv(176)
-#    Time: 1430 ns  Iteration: 0  Instance: /rdkey_tb
-# Break in Module rdkey_tb at ./roundkey_tb.sv line 176
-# End time: 16:14:56 on Feb 23,2022, Elapsed time: 0:03:41
+# -----------------------------
+#    START TEST
+# -----------------------------
+# 
+# Completed All Vectors!
+# -----------------------------
+#     TEST SUCCEDED
+# -----------------------------
+# 
+# ** Note: $stop    : ./roundkey_vec.sv(72)
+#    Time: 8995 ns  Iteration: 1  Instance: /roundkey_tb
+# Break in Module roundkey_tb at ./roundkey_vec.sv line 72
+# End time: 13:03:50 on Feb 24,2022, Elapsed time: 0:00:14
 # Errors: 0, Warnings: 0

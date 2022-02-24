@@ -50,9 +50,9 @@
 # -----------------------------
 #     TEST SUCCEDED
 # -----------------------------
-# 
-# ** Note: $stop    : ./roundkey_vec.sv(69)
-#    Time: 8995 ns  Iteration: 1  Instance: /roundkey_tb
+## End time: 16:13:37 on Feb 23,2022, Elapsed time: 26:50:35
+# Errors: 3, Warnings: 0
+nce: /roundkey_tb
 # Break in Module roundkey_tb at ./roundkey_vec.sv line 69
 add wave -position insertpoint  \
 sim:/roundkey_tb/expected_out
