@@ -14,6 +14,14 @@
 *	    to skip mixcolumns or everything except ark.
 */
 
+
+`include "./aes_sbox_128.sv"
+`include "./aes_sbox_word.sv"
+`include "./aes_sbox.sv"
+`include "./aes_mixcolumns.sv"
+`include "./aes_shiftrow.sv"
+`include "./aes_add_roundkey.sv"
+
 module aes_rounddata(input logic [3:0] round,
 		     input logic [1:0] mode, //00 for 128 01 for 192 and 10 for 256
 		     input logic [127:0] round_key,
