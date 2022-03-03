@@ -11,7 +11,7 @@
 *           [3 1 1 2][a_3,j]
 *I used the secworks repo for reference here as it gets a little mathy
 */
-`include "./galois_func.sv"
+
 
 module aes_mixcolumns(data, mixedcols);
 
