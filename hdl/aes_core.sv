@@ -4,6 +4,7 @@
 *	    generalized AES core
 */
 
+
 module aes_core_gen(input logic start,
 		    input logic clk,
 		    input logic reset,
@@ -32,6 +33,10 @@ module aes_core_gen(input logic start,
 		    //Value to hold number of rounds for generalization of vector select
 		    logic [3:0] roundAmount;
 		    
+		    //Decipher Key Signaling
+		    logic dec_key_gen;
+		    logic [3:0] dec_key_schedule_round;
+		    
 		    //Set roundAmount based on mode
 		    //TODO THIS SHOULD BE MOVED TO THE FSM AND NOT DONE THIS WAY
 		    always_comb
@@ -58,8 +63,11 @@ module aes_core_gen(input logic start,
 		    		    .enc_dec(enc_dec),
 		    		    .enc_dec_reg(enc_dec_reg),
 		    		    .round(round),
-		    		    .done(done));
-		    
+		    		    .done(done),
+		    		    .dec_key_schedule_round(dec_key_schedule_round),
+		    		    .dec_key_gen(dec_key_gen));
+
+
 		    //Encipher Datapath
 		    aes_rounddata enc_data(.round(round),
 		    			   .mode(mode),

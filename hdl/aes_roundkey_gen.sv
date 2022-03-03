@@ -7,6 +7,33 @@
 
 //TODO why not just make it take round as input and give one key
 
+
+module aes_roundkey_gen_notbad(input logic [1:0] mode, //00 for AES-128 01 for AES_192 10 for AES_256
+		       input logic [255:0] key_in,
+		       output logic [127:0] round_key [14:0]);
+		
+		logic [127:0] round_key_internal [14:0];
+		//Intermediary round key for 256 bit case
+		logic [127:0] rk1_tmp, rk1_256;
+		logic prev_key_offset;
+		
+		//The first (Round 0) key is the input key
+		assign round_key_internal[0] = key_in[255:128];
+		
+		//This offset is used for when we need to change the selected index of the array
+		//TODO : THIS IS REALLY BEHAVIORAL AND SHOULD BE CHANGED AT SOME POINT
+		assign prev_key_offset = mode[1] ? 1'b1 : 1'b0;
+
+		//Calculate the round_key for round 1
+		aes_roundkey rk_1(.RD(4'h1),
+				  .mode(mode),
+				  .prev_key(round_key_internal[0]),
+				  .current_key(round_key_internal[0]),
+				  .round_key(rk1_tmp));
+
+endmodule
+
+
 module aes_roundkey_gen(input logic [1:0] mode, //00 for AES-128 01 for AES_192 10 for AES_256
 		       input logic [255:0] key_in,
 		       output logic [127:0] round_key [14:0]);

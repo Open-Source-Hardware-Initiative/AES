@@ -99,6 +99,7 @@ module aes_rounddata(input logic [3:0] round,
 		//Set ark_in according to mode NOTE: defaults to 256
 		assign ark_in_mode = AES_128_MODE ? ark_in_128 : (AES_192_MODE ? ark_in_192 : ark_in_256);
 		assign ark_in = r0_flag ? data_in : ark_in_mode;
+		
 		//AES Add Round Key operation
 		aes_addroundkey ark(.data(ark_in),
 				    .round_key(round_key),

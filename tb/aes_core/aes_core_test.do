@@ -24,7 +24,7 @@ if [file exists work] {
 }
 vlib work
 # compile source files
-vlog ../../hdl/*.sv ./aes_core_tb.sv
+vlog ./aes_core_tb.sv
 
 # start and run simulation
 #vsim -voptargs=+acc top
