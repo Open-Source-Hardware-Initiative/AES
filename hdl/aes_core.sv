@@ -104,7 +104,7 @@ module aes_core_gen(input logic start,
 		    decipher_key_mem dkm(.clk(clk),
 		                         .dec_key_gen(dec_key_gen),
 		                         .enc_dec(enc_dec),
-		                         .round_key_in(round_keys[round]),
+		                         .round_key_in(round_keys[dec_key_schedule_round]),
 		                         .round(dec_key_schedule_round),
 		                         .key_out(dec_key_out));
 		    
