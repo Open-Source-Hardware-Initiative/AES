@@ -66,7 +66,7 @@ module aes_core_gen(input logic start,
 		    assign key_round = dec_key_gen ? dec_key_schedule_round : round;
 		
 		
-		    aes_roundkey_gen_notbad rk_test(.mode(mode),
+		    aes_roundkey_gen rk_test(.mode(mode),
 		                            .key_in(rk_in),
 		                            .round(key_round),
 		                            .round_key(round_key));

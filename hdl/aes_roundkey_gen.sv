@@ -8,7 +8,7 @@
 //TODO why not just make it take round as input and give one key
 
 
-module aes_roundkey_gen_notbad(input logic [1:0] mode, //00 for AES-128 01 for AES_192 10 for AES_256
+module aes_roundkey_gen(input logic [1:0] mode, //00 for AES-128 01 for AES_192 10 for AES_256
 		       input logic [255:0] key_in,
 		       input logic [3:0] round,
 		       output logic [127:0] round_key);
@@ -47,7 +47,7 @@ module aes_roundkey_gen_notbad(input logic [1:0] mode, //00 for AES-128 01 for A
 endmodule
 
 
-module aes_roundkey_gen(input logic [1:0] mode, //00 for AES-128 01 for AES_192 10 for AES_256
+module aes_roundkey_gen_legacy(input logic [1:0] mode, //00 for AES-128 01 for AES_192 10 for AES_256
 		       input logic [255:0] key_in,
 		       output logic [127:0] round_key [14:0]);
 		
