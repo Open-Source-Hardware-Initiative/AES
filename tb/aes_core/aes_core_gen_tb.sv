@@ -41,7 +41,7 @@ module aes_core_gen_tb();
 	logic [255:0] key;
 	logic [127:0] data_in;
 	logic [127:0] data_out;
-	
+	logic init_done;
 	
 	aes_core_gen dut(.start(start),
 			 .clk(clk),
