@@ -19,6 +19,7 @@ module aes_core_gen(input logic start,
 		    logic [127:0] round_keys [14:0];
 		    //Logic value to hold round number from FSM
 		    logic [3:0] round;
+		    logic [3:0] key_round;
 		    //Encipher Data
 		    logic [127:0] data_out_enc;
 		    //Decipher Data
@@ -31,6 +32,11 @@ module aes_core_gen(input logic start,
 		    //Register to hold encipher_decipher state for whole operation
 		    logic enc_dec_reg;
 		    logic r0_flag;
+		    //Key Logic
+		    logic [127:0] round_key;
+		    logic [127:0] prev_key; // Key from last round
+		    logic [127:0] prev_key_2; //Key from 2 rounds ago
+		    logic [255:0] rk_in;
 		    //Value to hold number of rounds for generalization of vector select
 		    logic [3:0] roundAmount;
 		    
@@ -51,10 +57,20 @@ module aes_core_gen(input logic start,
 		      end
 
 		    
-		    //AES round key
-		    aes_roundkey_gen rkgen(.mode(mode),
-		    			   .key_in(key),
-		    			   .round_key(round_keys));
+
+		
+		    //If we are on round 0 or 1 then select input key
+		    assign rk_in = (~(|key_round[3:1]) ? key : {prev_key_2,prev_key});
+		
+		    //Mux between decipher generation round and encipher round
+		    assign key_round = dec_key_gen ? dec_key_schedule_round : round;
+		
+		
+		    aes_roundkey_gen_notbad rk_test(.mode(mode),
+		                            .key_in(rk_in),
+		                            .round(key_round),
+		                            .round_key(round_key));
+		
 		    
 		    //AES FSM 128
 		    aes_fsm_gen fsm(.mode(mode),
@@ -72,14 +88,14 @@ module aes_core_gen(input logic start,
 		    //Encipher Datapath
 		    aes_rounddata enc_data(.round(round),
 		    			   .mode(mode),
-		    			   .round_key(round_keys[round]),
+		    			   .round_key(round_key),
 		    			   .data_in(internal_data),
 		    			   .data_out(data_out_enc));
 		    			   
 		    //Decipher Datapath
 		    aes_inv_rounddata dec_data(.round(round),
 		    		      	       .mode(mode),
-		    		      	       .round_key(round_keys[roundAmount -round]),
+		    		      	       .round_key(dec_key_out),
 		    		               .data_in(internal_data),
                                    .data_out(data_out_dec));
 		    			   
@@ -90,6 +106,12 @@ module aes_core_gen(input logic start,
 		    always @(posedge clk)
 		      begin
 			aes_state = enc_dec_state;
+			
+			
+			//This would probably be better accomplished by a FIFO
+			prev_key_2 = prev_key;
+			prev_key = round_key;
+			
 		      end //always @(posedge clk)
 
 		    //Check for round 0
@@ -104,8 +126,10 @@ module aes_core_gen(input logic start,
 		    decipher_key_mem dkm(.clk(clk),
 		                         .dec_key_gen(dec_key_gen),
 		                         .enc_dec(enc_dec),
-		                         .round_key_in(round_keys[dec_key_schedule_round]),
-		                         .round(dec_key_schedule_round),
+		                         .round_key_in(round_key),
+		                         .writeRound(dec_key_schedule_round),
+		                         .readRound(round),
+		                         .roundAmount(roundAmount),
 		                         .key_out(dec_key_out));
 		    
 

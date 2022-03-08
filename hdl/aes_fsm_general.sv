@@ -59,6 +59,8 @@ module aes_fsm_gen(input logic [1:0] mode,
 				    if(enc_dec_reg == 1'b0)
 				      begin
 				        NEXT_STATE = S1;
+				        dec_key_gen = 1'b0;
+				        dec_key_schedule_round_next = 4'h0;
 				      end
 				    else
 				      begin
@@ -74,6 +76,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 			
 			//Begin State 1 (Round 1)
 			S1 : begin
+			    dec_key_gen = 1'b0;
 				round = 4'h1;
 				done = 1'b0;
 				NEXT_STATE = S2;

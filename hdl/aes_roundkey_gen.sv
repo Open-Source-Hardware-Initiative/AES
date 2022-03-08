@@ -10,31 +10,39 @@
 
 module aes_roundkey_gen_notbad(input logic [1:0] mode, //00 for AES-128 01 for AES_192 10 for AES_256
 		       input logic [255:0] key_in,
-		       input logic [3:0] dec_key_schedule_round, round,
-		       input logic dec_key_gen,
-		       output logic [127:0] round_key [14:0]);
+		       input logic [3:0] round,
+		       output logic [127:0] round_key);
 		
-		logic [127:0] round_key_internal [14:0];
-		//Intermediary round key for 256 bit case
-		logic [127:0] rk1_tmp, rk1_256;
+		logic [127:0] round_key_internal;
+
+		logic [127:0] key_r0,key_r1;
 		logic prev_key_offset;
 
-		
-		//The first (Round 0) key is the input key
-		assign round_key_internal[0] = key_in[255:128];
+        //TODO I don't really like using a case statement here
+  		    always_comb
+		      begin
+		    	case(round)
+		    	  4'h0 : round_key = key_r0;
+		    	  4'h1 : round_key = key_r1;
+		    	  default : round_key = round_key_internal;
+		    	endcase
+		      end
+      
+        
+        //Flags to check for round 0 or round 1 case
+        assign r0_flag = ~(|round[3:0]);
+        assign r1_flag = ~(|round[3:1]) & round[0];
+        
+        assign key_r0 = key_in[255:128];
+        assign key_r1 = mode[1] ? key_in[127:0] : round_key_internal;
 
-
-		assign prev_key_offset = mode[1] ? 1'b1 : 1'b0;
-
-        //Mux between encrypt gen and decrypt round values
-        assign round_in = dec_key_gen ? dec_key_schedule_round : round;
 
 		//Calculate the round_key for round 1
-		aes_roundkey rk_1(.RD(round_in),
+		aes_roundkey rk_1(.RD(round),
 				  .mode(mode),
-				  .prev_key(key_in[127:0]),
+				  .prev_key(key_in[255:128]),
 				  .current_key(key_in[127:0]),
-				  .round_key(rk1_tmp));
+				  .round_key(round_key_internal));
 				  
 endmodule
 
