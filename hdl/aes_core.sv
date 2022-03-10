@@ -80,6 +80,7 @@ module aes_core_gen(input logic start,
 		    		    .enc_dec(enc_dec),
 		    		    .enc_dec_reg(enc_dec_reg),
 		    		    .round(round),
+		    		    .roundAmount(roundAmount),
 		    		    .done(done),
 		    		    .dec_key_schedule_round(dec_key_schedule_round),
 		    		    .dec_key_gen(dec_key_gen));

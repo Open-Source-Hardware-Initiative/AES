@@ -16,7 +16,7 @@ module aes_roundkey_gen(input logic [1:0] mode, //00 for AES-128 01 for AES_192 
 		logic [127:0] round_key_internal;
 
 		logic [127:0] key_r0,key_r1;
-		logic prev_key_offset;
+		logic [127:0] prev_key;
 
         //TODO I don't really like using a case statement here
   		    always_comb
@@ -33,14 +33,14 @@ module aes_roundkey_gen(input logic [1:0] mode, //00 for AES-128 01 for AES_192 
         assign r0_flag = ~(|round[3:0]);
         assign r1_flag = ~(|round[3:1]) & round[0];
         
-        assign key_r0 = key_in[255:128];
+        assign key_r0 = mode[1] ? key_in[255:128] : key_in[127:0];
         assign key_r1 = mode[1] ? key_in[127:0] : round_key_internal;
 
-
+        assign prev_key = mode[1] ? key_in[255:128] : key_in[127:0];
 		//Calculate the round_key for round 1
 		aes_roundkey rk_1(.RD(round),
 				  .mode(mode),
-				  .prev_key(key_in[255:128]),
+				  .prev_key(prev_key),
 				  .current_key(key_in[127:0]),
 				  .round_key(round_key_internal));
 				  

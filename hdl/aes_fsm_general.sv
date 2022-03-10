@@ -11,7 +11,8 @@ module aes_fsm_gen(input logic [1:0] mode,
 		   input logic reset,
 		   input logic start, //Should be asserted when all info is provided
 		   input logic enc_dec,
-		   output logic [3:0] round, dec_key_schedule_round,
+		   input logic [3:0] roundAmount,
+		   output logic [3:0] round, dec_key_schedule_round, 
 		   output logic enc_dec_reg, dec_key_gen,
 		   output logic done);
 		   
@@ -203,7 +204,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 			    done = 1'b0;
 			    dec_key_gen = 1'b1;
 			    
-			    if(dec_key_schedule_round == 4'hE)
+			    if(dec_key_schedule_round == roundAmount)
 			      begin
 			        NEXT_STATE = S1;
 			      end
