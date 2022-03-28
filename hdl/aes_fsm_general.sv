@@ -14,7 +14,8 @@ module aes_fsm_gen(input logic [1:0] mode,
 		   input logic [3:0] roundAmount,
 		   output logic [3:0] round, dec_key_schedule_round, 
 		   output logic enc_dec_reg, dec_key_gen,
-		   output logic done);
+		   output logic [1:0] radix_width_sel,
+		   output logic done, round_complete, round_start);
 		   
 		   
 		logic [3:0] CURRENT_STATE;
@@ -23,6 +24,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 		//Register for mode so we can make sure it is the same for the whole operation
 		logic [1:0] mode_reg;
         logic [3:0] dec_key_schedule_round_next;
+        logic [1:0] radix_width_sel_next;
 		
 		parameter [3:0]
 		S0=4'h0, S1=4'h1, S2=4'h2, S3=4'h3, S4=4'h4, S5=4'h5,
@@ -41,6 +43,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 				CURRENT_STATE <= NEXT_STATE;
 				start_prev <= start;
 				dec_key_schedule_round <= dec_key_schedule_round_next;
+				radix_width_sel <= radix_width_sel_next;
 			  end
 		  end
 		  
@@ -51,9 +54,11 @@ module aes_fsm_gen(input logic [1:0] mode,
 			case(CURRENT_STATE)
 			//Begin State 0 (Round 0)
 			S0: begin
+			    
 				round = 4'h0;
 				done = 1'b0;
 				enc_dec_reg = enc_dec;
+				round_complete = 1'b1;
 				
 				if(start)
 				  begin
@@ -62,6 +67,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 				        NEXT_STATE = S1;
 				        dec_key_gen = 1'b0;
 				        dec_key_schedule_round_next = 4'h0;
+				        radix_width_sel_next = 2'b0;
 				      end
 				    else
 				      begin
@@ -80,7 +86,22 @@ module aes_fsm_gen(input logic [1:0] mode,
 			    dec_key_gen = 1'b0;
 				round = 4'h1;
 				done = 1'b0;
-				NEXT_STATE = S2;
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S2;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S1;
+				    round_start = 1'b0;
+				  end
+				
+				
 			end //S1
 			
 			//Begin State 2 (Round 2)
@@ -88,65 +109,187 @@ module aes_fsm_gen(input logic [1:0] mode,
 				round = 4'h2;
 				done = 1'b0;
 				NEXT_STATE = S3;
+				
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S3;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S2;
+				    round_start = 1'b0;
+				  end
 			end //S2
 			
 			//Begin State 3 (Round 3)
 			S3 : begin
 				round = 4'h3;
 				done = 1'b0;
-				NEXT_STATE = S4;
+
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S4;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S3;
+				    round_start = 1'b0;
+				  end
 			end //S3
 			
 			//Begin State 4 (Round 4)
 			S4 : begin
 				round = 4'h4;
 				done = 1'b0;
-				NEXT_STATE = S5;
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S5;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S4;
+				    round_start = 1'b0;
+				  end
 			end //S4
 			
 			//Begin State 5 (Round 5)
 			S5 : begin
 				round = 4'h5;
 				done = 1'b0;
-				NEXT_STATE = S6;
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S6;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S5;
+				    round_start = 1'b0;
+				  end
 			end //S5
 			
 			//Begin State 6 (Round 6)
 			S6 : begin
 				round = 4'h6;
 				done = 1'b0;
-				NEXT_STATE = S7;
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S7;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S6;
+				    round_start = 1'b0;
+				  end
 			end //S6
 			
 			//Begin State 7 (Round 7)
 			S7 : begin
 				round = 4'h7;
 				done = 1'b0;
-				NEXT_STATE = S8;
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S8;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S7;
+				    round_start = 1'b0;
+				  end
 			end //S7
 			
 			//Begin State 8 (Round 8)
 			S8 : begin
 				round = 4'h8;
 				done = 1'b0;
-				NEXT_STATE = S9;
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S9;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S8;
+				    round_start = 1'b0;
+				  end
 			end //S8
 			
 			//Begin State 9 (Round 9)
 			S9 : begin
 				round = 4'h9;
 				done = 1'b0;
-				NEXT_STATE = S10;
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S10;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S9;
+				    round_start = 1'b0;
+				  end
 			end //S9
 			
 			//Begin State 10 (Round A)
 			S10 : begin
-				round = 4'hA;
-				//Last round for AES128
-				if(mode == 2'b00)
-				  begin
-				    done = 1'b1;
-				    NEXT_STATE = S0;
+				    round = 4'hA;
+				    //Last round for AES128
+				    if(mode == 2'b00)
+				      begin
+				    
+				    round_complete = 1'b0;
+				    if(radix_width_sel == 2'b11)
+				      begin
+                        done = 1'b1;
+				        radix_width_sel_next = 2'b0;
+				        round_complete = 1'b1;
+			            NEXT_STATE = S0;
+			            round_start = 1'b1;
+				      end
+				    else
+				      begin
+				        radix_width_sel_next = radix_width_sel + 1;
+				        NEXT_STATE = S10;
+				        round_start = 1'b0;
+				      end
+				      
 				  end
 				//If not AES 128 then move on
 				else

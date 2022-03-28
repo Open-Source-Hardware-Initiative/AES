@@ -39,10 +39,19 @@ module aes_core_gen(input logic start,
 		    logic [255:0] rk_in;
 		    //Value to hold number of rounds for generalization of vector select
 		    logic [3:0] roundAmount;
+
+
+		
+		    //Goes to 1 when the full width of 128 is processed (from FSM)
+		    logic round_complete;
+		    logic round_start;
 		    
 		    //Decipher Key Signaling
 		    logic dec_key_gen;
 		    logic [3:0] dec_key_schedule_round;
+		    
+		    //Variable Radix
+		    logic [1:0] radix_width_sel;
 		    
 		    //Set roundAmount based on mode
 		    //TODO THIS SHOULD BE MOVED TO THE FSM AND NOT DONE THIS WAY
@@ -83,13 +92,18 @@ module aes_core_gen(input logic start,
 		    		    .roundAmount(roundAmount),
 		    		    .done(done),
 		    		    .dec_key_schedule_round(dec_key_schedule_round),
-		    		    .dec_key_gen(dec_key_gen));
+		    		    .dec_key_gen(dec_key_gen),
+		    		    .radix_width_sel(radix_width_sel),
+		    		    .round_complete(round_complete),
+		    		    .round_start(round_start));
 
 
 		    //Encipher Datapath
 		    aes_rounddata enc_data(.round(round),
+		                   .clk(clk),
 		    			   .mode(mode),
 		    			   .round_key(round_key),
+		    			   .width_sel(radix_width_sel),
 		    			   .data_in(internal_data),
 		    			   .data_out(data_out_enc));
 		    			   
@@ -105,15 +119,22 @@ module aes_core_gen(input logic start,
 		    
 		    //Register the loopback encipher/decipher data
 		    always @(posedge clk)
-		      begin
-			aes_state = enc_dec_state;
+		    begin
 			
+			//Only register data output once full width is processed
+			if(round_complete == 1'b1)
+			  begin
+			    aes_state = enc_dec_state;
+			  end
 			
-			//This would probably be better accomplished by a FIFO
-			prev_key_2 = prev_key;
-			prev_key = round_key;
-			
-		      end //always @(posedge clk)
+			//Only register keys when new round is begun.
+			if(round_start == 1'b1)
+			  begin
+			    prev_key_2 = prev_key;
+			    prev_key = round_key;
+			  end
+			  
+		    end //always @(posedge clk)
 
 		    //Check for round 0
 		    assign r0_flag = ~(round[0] | round[1] | round[2] | round[3]);

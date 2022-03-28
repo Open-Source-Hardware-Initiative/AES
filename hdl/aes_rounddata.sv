@@ -18,14 +18,20 @@
 
 
 module aes_rounddata(input logic [3:0] round,
+             input logic clk,
 		     input logic [1:0] mode, //00 for 128 01 for 192 and 10 for 256
+		     input logic [1:0] width_sel, //selects sub-word for radix
 		     input logic [127:0] round_key,
 		     input logic [127:0] data_in,
 		     output logic [127:0] data_out);
 
-		logic [127:0] sbox_out;
+		logic [31:0] sbox_out;
 		logic [127:0] shiftRow_out;
-		logic [127:0] mixCol_out;
+		logic [31:0] mixCol_out;
+		logic [31:0] sbox_in;
+		
+		logic [31:0] accumulation_in;
+		logic [127:0] accumulation_out;
 		
 		logic [127:0] ark_in_256;
 		logic [127:0] ark_in_128;
@@ -33,25 +39,43 @@ module aes_rounddata(input logic [3:0] round,
 		logic [127:0] ark_in_mode;
 		logic [127:0] ark_in;
 		
+
+		
 		logic AES_128_MODE;
 		logic AES_192_MODE;
 		logic AES_256_MODE;
 
 		logic r0_flag;
+		logic r10_flag;
 		logic r14_flag;
 
-		//AES Substitution Box operation
-		aes_sbox_128 sbox(.in(data_in),
-				  .out(sbox_out));
+
 
 
 		//AES Shift rows operation
-		aes_shiftrow srow(.dataIn(sbox_out),
+		aes_shiftrow srow(.dataIn(data_in),
 				  .dataOut(shiftRow_out));
 
-		//AES Mix Columns operation
-		aes_mixcolumns mixcol(.data(shiftRow_out),
-				      .mixedcols(mixCol_out));
+        //Select current word from output of shiftrow using 4 input mux
+        //Outputs should be:
+        //00 : [31:0] | 01 : [63:32] | 10 : [95:64] | 11 : [127:96]
+        assign sbox_in = width_sel[1] ? (width_sel[0] ? shiftRow_out[127:96] : shiftRow_out[95:64]) : (width_sel[0] ? shiftRow_out[63:32] : shiftRow_out[31:0]);
+
+
+		//AES Substitution Box operation for single word
+		aes_sbox_word sbox(.in(sbox_in),
+				  .out(sbox_out));
+
+		//AES Mix Columns operation for single word
+		mixword mixcol(.word(sbox_out),
+				      .mixed_word(mixCol_out));
+
+
+        //Accumulation in should change between sbox_out and mixcol_out based on last_round
+        assign accumulation_in = r10_flag ? sbox_out : mixCol_out;
+
+        //Accumulation register for 32 bit radix
+        accumulation_reg stageon_accum(.in(accumulation_in),.clk(clk),.enable(1'b1),.out(accumulation_out));
 
 
 		//Check for round 0 (RD = 0000)
@@ -73,13 +97,13 @@ module aes_rounddata(input logic [3:0] round,
 		//TODO : Un-nest ternaries?
 		
 		//Ark_in for AES128 (Necessary due to different round amounts between standards)
-		assign ark_in_128 = r0_flag ? data_in : (r10_flag ? shiftRow_out : mixCol_out);
+		assign ark_in_128 = r0_flag ? data_in : (r10_flag ? sbox_out : mixCol_out);
 		
 		//Ark_in for AES192 (Necessary due to different round amounts between standards)
-		assign ark_in_192 = r0_flag ? data_in : (r12_flag ? shiftRow_out : mixCol_out);
+		assign ark_in_192 = r0_flag ? data_in : (r12_flag ? sbox_out : mixCol_out);
 		
 		//Ark_in for AES256 (Necessary due to different round amounts between standards)
-		assign ark_in_256 = r0_flag ? data_in : (r14_flag ? shiftRow_out : mixCol_out);
+		assign ark_in_256 = r0_flag ? data_in : (r14_flag ? sbox_out : mixCol_out);
 		
 		
 		//Set mode flag accordingly
@@ -93,7 +117,8 @@ module aes_rounddata(input logic [3:0] round,
 		
 		//Set ark_in according to mode NOTE: defaults to 256
 		assign ark_in_mode = AES_128_MODE ? ark_in_128 : (AES_192_MODE ? ark_in_192 : ark_in_256);
-		assign ark_in = r0_flag ? data_in : ark_in_mode;
+		assign ark_in = r0_flag ? data_in : accumulation_out;
+		
 		
 		//AES Add Round Key operation
 		aes_addroundkey ark(.data(ark_in),
@@ -101,7 +126,29 @@ module aes_rounddata(input logic [3:0] round,
 				    .sum(data_out));
 
 
+endmodule
 
 
+
+
+
+
+
+module accumulation_reg(input logic [31:0] in,
+                        input logic clk, enable, 
+                        output logic [127:0] out);
+                        
+    logic [127:0] out_prev;
+    logic [127:0] prev_shift;
+    
+    assign prev_shift = out_prev >> 32;
+    assign out = {in,prev_shift[95:0]};
+    
+    //Accumulate in 32 bit increments on clk
+    always @(posedge clk)
+      begin
+        out_prev <= out;
+      
+      end
 
 endmodule
