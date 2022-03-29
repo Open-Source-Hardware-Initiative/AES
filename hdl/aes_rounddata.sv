@@ -31,6 +31,8 @@ module aes_rounddata(input logic [3:0] round,
 		logic [31:0] sbox_in;
 		
 		logic [31:0] accumulation_in;
+		logic [31:0] accumulation_in_128;
+		logic [31:0] accumulation_in_256;
 		logic [127:0] accumulation_out;
 		
 		logic [127:0] ark_in_256;
@@ -72,7 +74,9 @@ module aes_rounddata(input logic [3:0] round,
 
 
         //Accumulation in should change between sbox_out and mixcol_out based on last_round
-        assign accumulation_in = r10_flag ? sbox_out : mixCol_out;
+        assign accumulation_in_128 = r10_flag ? sbox_out : mixCol_out;
+        assign accumulation_in_256 = r14_flag ? sbox_out : mixCol_out;
+        assign accumulation_in = AES_256_MODE ? accumulation_in_256 : accumulation_in_128;
 
         //Accumulation register for 32 bit radix
         accumulation_reg stageon_accum(.in(accumulation_in),.clk(clk),.enable(1'b1),.out(accumulation_out));

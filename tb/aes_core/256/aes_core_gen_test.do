@@ -36,7 +36,7 @@ view wave
 -- display input and output signals as hexidecimal values
 # Diplays All Signals recursively
 # add wave -hex -r /aes_core_gen_tb/*
-
+do wave.do
 
 -- Set Wave Output Items 
 TreeUpdate [SetDefaultTree]

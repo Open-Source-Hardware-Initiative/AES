@@ -274,6 +274,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 				    if(mode == 2'b00)
 				      begin
 				    
+				    //Radix Management
 				    round_complete = 1'b0;
 				    if(radix_width_sel == 2'b11)
 				      begin
@@ -295,7 +296,24 @@ module aes_fsm_gen(input logic [1:0] mode,
 				else
 				  begin
 				    done = 1'b0;
-				    NEXT_STATE = S11;		  
+				    //Radix Management
+				    round_complete = 1'b0;
+				    if(radix_width_sel == 2'b11)
+				      begin
+                        done = 1'b0;
+				        radix_width_sel_next = 2'b0;
+				        round_complete = 1'b1;
+			            NEXT_STATE = S11;
+			            round_start = 1'b1;
+				      end
+				    else
+				      begin
+				        radix_width_sel_next = radix_width_sel + 1;
+				        NEXT_STATE = S10;
+				        round_start = 1'b0;
+				      end
+				    
+				      
 				  end
 			end //S10
 			
@@ -304,7 +322,22 @@ module aes_fsm_gen(input logic [1:0] mode,
 			S11 : begin
 				round = 4'hB;
 				done = 1'b0;
-				NEXT_STATE = S12;
+			    //Radix Management
+				    round_complete = 1'b0;
+				    if(radix_width_sel == 2'b11)
+				      begin
+                        done = 1'b0;
+				        radix_width_sel_next = 2'b0;
+				        round_complete = 1'b1;
+			            NEXT_STATE = S12;
+			            round_start = 1'b1;
+				      end
+				    else
+				      begin
+				        radix_width_sel_next = radix_width_sel + 1;
+				        NEXT_STATE = S11;
+				        round_start = 1'b0;
+				      end
 			     end //S11
 				
 				
@@ -314,14 +347,42 @@ module aes_fsm_gen(input logic [1:0] mode,
 				//Last Round for AES192
 				if(mode == 2'b01)
 				  begin
-				    done = 1'b1;
-				    NEXT_STATE = S0;
+				    //Radix Management
+				    round_complete = 1'b0;
+				    if(radix_width_sel == 2'b11)
+				      begin
+                        done = 1'b1;
+				        radix_width_sel_next = 2'b0;
+				        round_complete = 1'b1;
+			            NEXT_STATE = S0;
+			            round_start = 1'b1;
+				      end
+				    else
+				      begin
+				        radix_width_sel_next = radix_width_sel + 1;
+				        NEXT_STATE = S12;
+				        round_start = 1'b0;
+				      end
 				  end
 				//Otherwise go to S13
 				else
 				  begin
 				    done = 1'b0;
-				    NEXT_STATE = S13;		  
+				    //Radix Management
+				    round_complete = 1'b0;
+				    if(radix_width_sel == 2'b11)
+				      begin
+				        radix_width_sel_next = 2'b0;
+				        round_complete = 1'b1;
+			            NEXT_STATE = S13;
+			            round_start = 1'b1;
+				      end
+				    else
+				      begin
+				        radix_width_sel_next = radix_width_sel + 1;
+				        NEXT_STATE = S12;
+				        round_start = 1'b0;
+				      end	  
 				  end
 			end //S12
 			
@@ -329,7 +390,21 @@ module aes_fsm_gen(input logic [1:0] mode,
 			S13 : begin
 				round = 4'hD;
 				done = 1'b0;
-				NEXT_STATE = S14;
+				    //Radix Management
+				    round_complete = 1'b0;
+				    if(radix_width_sel == 2'b11)
+				      begin
+				        radix_width_sel_next = 2'b0;
+				        round_complete = 1'b1;
+			            NEXT_STATE = S14;
+			            round_start = 1'b1;
+				      end
+				    else
+				      begin
+				        radix_width_sel_next = radix_width_sel + 1;
+				        NEXT_STATE = S13;
+				        round_start = 1'b0;
+				      end
 			      end
 
 
@@ -337,8 +412,23 @@ module aes_fsm_gen(input logic [1:0] mode,
 		    S14 : begin
 		      		//Last round for AES256
 		      	        round = 4'hE;
-		      	        done = 1'b1;
-		      	        NEXT_STATE = S0;
+
+		      	    //Radix Management
+				    round_complete = 1'b0;
+				    if(radix_width_sel == 2'b11)
+				      begin
+                        done = 1'b1;
+				        radix_width_sel_next = 2'b0;
+				        round_complete = 1'b1;
+			            NEXT_STATE = S0;
+			            round_start = 1'b1;
+				      end
+				    else
+				      begin
+				        radix_width_sel_next = radix_width_sel + 1;
+				        NEXT_STATE = S14;
+				        round_start = 1'b0;
+				      end
 		            end
 		            
 		    			
