@@ -29,6 +29,7 @@ module aes_inv_rounddata(input logic [3:0] round,
 		logic [127:0] shiftRow_out;
 		logic [127:0] mixCol_out;
 		logic [127:0] ark_out;
+		logic [127:0] sbox_in;
 		
 		logic [127:0] shiftRow_in;
 		
@@ -73,21 +74,24 @@ module aes_inv_rounddata(input logic [3:0] round,
 				      .mixed_col(mixCol_out));
 
 		//We want to skip mix columns (alter the input to shiftRow) on round 0
-		assign shiftRow_in = r0_flag ? ark_out : mixCol_out;
+		assign sbox_in = r0_flag ? ark_out : mixCol_out;
+
+
+		//AES Substitution Box operation
+		aes_inv_sbox_128 sbox(.in(sbox_in),
+				  .out(shiftRow_in));
 
 
 		//AES Shift rows operation
 		aes_inv_shiftrow srow(.dataIn(shiftRow_in),
 				  .dataOut(shiftRow_out));
 
-		//AES Substitution Box operation
-		aes_inv_sbox_128 sbox(.in(shiftRow_out),
-				  .out(sbox_out));
+
 
 		//Check if this is the last round of whatever mode we are in
 		assign last_round = (r10_flag & AES_128_MODE) | (r12_flag & AES_192_MODE) | (r14_flag & AES_256_MODE);
 
 		//Assign data out to the output of the ark if it is the last round or the sbox otherwise
-		assign data_out = last_round ? ark_out : sbox_out;
+		assign data_out = last_round ? ark_out : shiftRow_out;
 		
 endmodule
