@@ -18,18 +18,18 @@ module aes_fsm_gen(input logic [1:0] mode,
 		   output logic done, round_complete, round_start);
 		   
 		   
-		logic [3:0] CURRENT_STATE;
-		logic [3:0] NEXT_STATE;
+		logic [4:0] CURRENT_STATE;
+		logic [4:0] NEXT_STATE;
 		logic start_prev;
 		//Register for mode so we can make sure it is the same for the whole operation
 		logic [1:0] mode_reg;
         logic [3:0] dec_key_schedule_round_next;
         logic [1:0] radix_width_sel_next;
 		
-		parameter [3:0]
-		S0=4'h0, S1=4'h1, S2=4'h2, S3=4'h3, S4=4'h4, S5=4'h5,
-		S6=4'h6, S7=4'h7, S8=4'h8, S9=4'h9, S10=4'hA, S11=4'hB,
-		S12=4'hC, S13=4'hD, S14=4'hE, S15=4'hF;
+		parameter [4:0]
+		S0=5'h00, S1=5'h01, S2=5'h02, S3=5'h03, S4=5'h04, S5=5'h05,
+		S6=5'h06, S7=5'h07, S8=5'h08, S9=5'h09, S10=5'h0A, S11=5'h0B,
+		S12=5'h0C, S13=5'h0D, S14=5'h0E, S15=5'h0F, S16=5'h10;
 
 		always @(posedge clk)
 		  begin
@@ -58,7 +58,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 				round = 4'h0;
 				done = 1'b0;
 				enc_dec_reg = enc_dec;
-				round_complete = 1'b1;
+				
 				
 				if(start)
 				  begin
@@ -68,11 +68,13 @@ module aes_fsm_gen(input logic [1:0] mode,
 				        dec_key_gen = 1'b0;
 				        dec_key_schedule_round_next = 4'h0;
 				        radix_width_sel_next = 2'b0;
+				        round_complete = 1'b1;
 				      end
 				    else
 				      begin
 				        NEXT_STATE = S15;
 				        dec_key_schedule_round_next = 4'h0;
+				        radix_width_sel_next = 2'b0;
 				      end
 				  end
 				else
@@ -439,14 +441,41 @@ module aes_fsm_gen(input logic [1:0] mode,
 			    
 			    if(dec_key_schedule_round == roundAmount)
 			      begin
-			        NEXT_STATE = S1;
+			        round_start = 1'b1;
+			        NEXT_STATE = S16;
 			      end
 			    else
 			      begin
 			        NEXT_STATE = S15;
 			        dec_key_schedule_round_next = dec_key_schedule_round + 1;
 			      end
-			    end
+			     			      
+			    end //S15
+
+
+
+			//Begin State 1 (Decipher Round 0)
+			S16 : begin
+			    dec_key_gen = 1'b0;
+				round = 4'h0;
+				done = 1'b0;
+				round_complete = 1'b0;
+				if(radix_width_sel == 2'b11)
+				  begin
+				    radix_width_sel_next = 2'b0;
+				    round_complete = 1'b1;
+			        NEXT_STATE = S1;
+			        round_start = 1'b1;
+				  end
+				else
+				  begin
+				    radix_width_sel_next = radix_width_sel + 1;
+				    NEXT_STATE = S16;
+				    round_start = 1'b0;
+				  end
+				end
+
+
 			      
 			      
 			endcase;

@@ -23,15 +23,20 @@ module aes_inv_rounddata(input logic [3:0] round,
 		     input logic [1:0] mode, //00 for 128 01 for 192 and 10 for 256
 		     input logic [127:0] round_key,
 		     input logic [127:0] data_in,
+		     input logic clk,
+		     input logic [1:0] width_sel, //selects sub-word for radix
 		     output logic [127:0] data_out);
 
-		logic [127:0] sbox_out;
-		logic [127:0] shiftRow_out;
-		logic [127:0] mixCol_out;
-		logic [127:0] ark_out;
-		logic [127:0] sbox_in;
 		
 		logic [127:0] shiftRow_in;
+		logic [127:0] shiftRow_out;
+		logic [127:0] ark_out;
+		
+		logic [31:0] sbox_in;
+		logic [31:0] sbox_out;
+		logic [31:0] mixCol_out;
+		logic [31:0] ark_out_mux;
+		
 		
 		logic AES_128_MODE;
 		logic AES_192_MODE;
@@ -68,18 +73,27 @@ module aes_inv_rounddata(input logic [3:0] round,
 				    .round_key(round_key),
 				    .sum(ark_out));
 
+        assign ark_out_mux = width_sel[1] ? (width_sel[0] ? ark_out[127:96] : ark_out[95:64]) : (width_sel[0] ? ark_out[63:32] : ark_out[31:0]);
+
 
 		//AES Mix Columns operation
-		aes_inv_mixcols mixcol(.data(ark_out),
-				      .mixed_col(mixCol_out));
+		inv_mixword mixcol(.word(ark_out_mux),
+				      .mixed_word(mixCol_out));
 
 		//We want to skip mix columns (alter the input to shiftRow) on round 0
-		assign sbox_in = r0_flag ? ark_out : mixCol_out;
+		assign sbox_in = r0_flag ? ark_out_mux : mixCol_out;
 
 
 		//AES Substitution Box operation
-		aes_inv_sbox_128 sbox(.in(sbox_in),
-				  .out(shiftRow_in));
+		aes_inv_sbox_word sbox(.in(sbox_in),
+				          .out(sbox_out));
+
+
+        //Accumulate 32 bit words for 4 cycles
+        accumulation_reg accum(.in(sbox_out),
+                               .clk(clk),
+                               .enable(1'b1),
+                               .out(shiftRow_in));
 
 
 		//AES Shift rows operation

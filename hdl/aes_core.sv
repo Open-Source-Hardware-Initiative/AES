@@ -109,8 +109,10 @@ module aes_core_gen(input logic start,
 		    			   
 		    //Decipher Datapath
 		    aes_inv_rounddata dec_data(.round(round),
+		                           .clk(clk),
 		    		      	       .mode(mode),
 		    		      	       .round_key(dec_key_out),
+		    		      	       .width_sel(radix_width_sel),
 		    		               .data_in(internal_data),
                                    .data_out(data_out_dec));
 		    			   

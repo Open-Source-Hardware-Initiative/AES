@@ -13,7 +13,7 @@ module decipher_key_mem(input logic clk, dec_key_gen, enc_dec,
 
     //Bounce key back to begin decrypt on 0th round, read registered for other rounds
     assign r0_flag = ~(|(readRound));
-    assign key_out = r0_flag ? round_key_in : key_mem[roundAmount - readRound];
+    assign key_out = key_mem[roundAmount - readRound];
               
     always @(posedge clk)
       begin
