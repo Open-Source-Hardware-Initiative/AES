@@ -110,6 +110,41 @@ module mixword (word, mixed_word);
    assign mixed_word = {mb0, mb1, mb2, mb3};
 endmodule
 
+module mixcol_radix8(input logic [31:0] gm2_mults, gm3_mults, sbox_outs,
+                     output logic [31:0] mixed_word);
 
+    logic [7:0] gm2_0_out, gm2_1_out, gm2_2_out, gm2_3_out;
+    logic [7:0] gm3_0_out, gm3_1_out, gm3_2_out, gm3_3_out;
+    logic [7:0] b3, b2, b1, b0;
+    logic [7:0] mb3, mb2, mb1, mb0;
 
+    //The gm2 inputs come in as
+    //gm2(b3)_gm2(b2)_gm2(b1)_gm2(b0)
+    assign gm2_0_out = gm2_mults[31:24];
+    assign gm2_1_out = gm2_mults[23:16];
+    assign gm2_2_out = gm2_mults[15:8];
+    assign gm2_3_out = gm2_mults[7:0];
+    
+    //The gm3 inputs come in as
+    //gm3(b3)_gm3(b2)_gm3(b1)_gm3(b0)
+    assign gm3_0_out = gm3_mults[23:16];
+    assign gm3_1_out = gm3_mults[15:8];
+    assign gm3_2_out = gm3_mults[7:0];
+    assign gm3_3_out = gm3_mults[31:24];
+    
+    //The sbos input come in as
+    //b3_b2_b1_b0
+    assign b3 = sbox_outs[7:0];
+    assign b2 = sbox_outs[15:8];
+    assign b1 = sbox_outs[23:16];
+    assign b0 = sbox_outs[31:24];
+    
+   assign mb0 = gm2_0_out ^ gm3_0_out ^ b2 ^ b3;
+   assign mb1 = gm2_1_out ^ gm3_1_out ^ b0 ^ b3;
+   assign mb2 = gm2_2_out ^ gm3_2_out ^ b0 ^ b1;
+   assign mb3 = gm2_3_out ^ gm3_3_out ^ b1 ^ b2;
+   
+   assign mixed_word = {mb0, mb1, mb2, mb3};
+
+endmodule
 
