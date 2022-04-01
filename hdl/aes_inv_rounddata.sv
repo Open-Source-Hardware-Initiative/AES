@@ -72,6 +72,8 @@ module aes_inv_rounddata(input logic [3:0] round,
 		aes_addroundkey ark(.data(data_in),
 				    .round_key(round_key),
 				    .sum(ark_out));
+				    
+
 
         assign ark_out_mux = width_sel[1] ? (width_sel[0] ? ark_out[127:96] : ark_out[95:64]) : (width_sel[0] ? ark_out[63:32] : ark_out[31:0]);
 
