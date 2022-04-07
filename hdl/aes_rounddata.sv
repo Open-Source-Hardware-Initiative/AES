@@ -136,7 +136,7 @@ module aes_rounddata(input logic [3:0] round,
 
         //Accumulation in should change between sbox_out and mixcol_out based on last_round
         assign accumulation_in_128 = r10_flag ? sbox_reg_out : mixCol_out;
-        assign accumulation_in_256 = r14_flag ? sbox_out : mixCol_out;
+        assign accumulation_in_256 = r14_flag ? sbox_reg_out : mixCol_out;
         assign accumulation_in = AES_256_MODE ? accumulation_in_256 : accumulation_in_128;
 
         //Accumulation register for 32 bit radix
