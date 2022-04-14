@@ -71,6 +71,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 				        dec_key_schedule_round_next = 4'h0;
 				        radix_width_sel_next = 2'b0;
 				        round_complete = 1'b1;
+				        round_start = 1'b1;
 				      end
 				    else
 				      begin
