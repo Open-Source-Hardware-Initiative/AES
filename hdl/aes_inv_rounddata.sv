@@ -147,7 +147,7 @@ module aes_inv_rounddata(input logic [3:0] round,
         always @(posedge clk)
           begin
           
-            if(width_sel[0] & width_sel[1])
+            if(~(width_sel[0]) & ~(width_sel[1]))
             begin
                 mixCol_reg <= mixCol_out;
             end
@@ -163,25 +163,25 @@ module aes_inv_rounddata(input logic [3:0] round,
 		    	  //Last segment, this is used to allow data
 		    	  //to propagate through on the next round
 		    	  //so we don't lose cycles
-		    	  4'h0 : mixCol_out_mux = mixCol_reg[7:0];
-		    	  4'h1 : mixCol_out_mux = mixCol_reg[15:8];
-		    	  4'h2 : mixCol_out_mux = mixCol_reg[23:16];
-		    	  4'h3 : mixCol_out_mux = mixCol_reg[31:24];
+		    	  4'h1 : mixCol_out_mux = mixCol_reg[7:0];
+		    	  4'h2 : mixCol_out_mux = mixCol_reg[15:8];
+		    	  4'h3 : mixCol_out_mux = mixCol_reg[23:16];
+		    	  4'h4 : mixCol_out_mux = mixCol_reg[31:24];
 		    	  //Lowest word
-		    	  4'h4 : mixCol_out_mux = mixCol_reg[7:0];
-		    	  4'h5 : mixCol_out_mux = mixCol_reg[15:8];
-		    	  4'h6 : mixCol_out_mux = mixCol_reg[23:16];
-		    	  4'h7 : mixCol_out_mux = mixCol_reg[31:24];
+		    	  4'h5 : mixCol_out_mux = mixCol_reg[7:0];
+		    	  4'h6 : mixCol_out_mux = mixCol_reg[15:8];
+		    	  4'h7 : mixCol_out_mux = mixCol_reg[23:16];
+		    	  4'h8 : mixCol_out_mux = mixCol_reg[31:24];
 		    	  //2nd word (from right)
-		    	  4'h8 : mixCol_out_mux = mixCol_reg[7:0];
-		    	  4'h9 : mixCol_out_mux = mixCol_reg[15:8];
-		    	  4'hA : mixCol_out_mux = mixCol_reg[23:16];
-		    	  4'hB : mixCol_out_mux = mixCol_reg[31:24];
+		    	  4'h9 : mixCol_out_mux = mixCol_reg[7:0];
+		    	  4'hA : mixCol_out_mux = mixCol_reg[15:8];
+		    	  4'hB : mixCol_out_mux = mixCol_reg[23:16];
+		    	  4'hC : mixCol_out_mux = mixCol_reg[31:24];
 		    	  //3rd word (from right)
-		    	  4'hC : mixCol_out_mux = mixCol_reg[7:0];
-		    	  4'hD : mixCol_out_mux = mixCol_reg[15:8];
-		    	  4'hE : mixCol_out_mux = mixCol_reg[23:16];
-		    	  4'hF : mixCol_out_mux = mixCol_reg[31:24];
+		    	  4'hD : mixCol_out_mux = mixCol_reg[7:0];
+		    	  4'hE : mixCol_out_mux = mixCol_reg[15:8];
+		    	  4'hF : mixCol_out_mux = mixCol_reg[23:16];
+		    	  4'h0 : mixCol_out_mux = mixCol_reg[31:24];
 		    	  //Default Case
 		    	  default : mixCol_out_mux = mixCol_out[7:0];
 		    	endcase
@@ -229,16 +229,14 @@ module accumulation_reg_8_128(input logic [7:0] in,
                         
     logic [127:0] out_prev;
     logic [127:0] prev_shift;
-    
-    assign prev_shift = out_prev >> 8;
-    assign out = {in,prev_shift[119:0]};
+
     
     //Accumulate in 32 bit increments on clk
     always @(posedge clk)
       begin
         if(enable == 1'b1)
           begin
-            out_prev <= out;
+            out <= {in,out[127:8]};
           end
       end
 

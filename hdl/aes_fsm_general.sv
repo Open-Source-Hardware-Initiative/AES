@@ -26,8 +26,8 @@ module aes_fsm_gen(input logic [1:0] mode,
         logic [3:0] dec_key_schedule_round_next;
         logic [4:0] radix_width_sel_next;
         
-        logic [3:0] sub_round_amount = 4'hF;
-		logic [4:0] dec_sub_round_amount = 5'h13;
+        logic [4:0] sub_round_amount = 5'h11;
+		logic [4:0] dec_sub_round_amount = 5'h15;
 		parameter [4:0]
 		S0=5'h00, S1=5'h01, S2=5'h02, S3=5'h03, S4=5'h04, S5=5'h05,
 		S6=5'h06, S7=5'h07, S8=5'h08, S9=5'h09, S10=5'h0A, S11=5'h0B,
@@ -542,6 +542,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 				  begin
 				    done = 1'b1;
 				    radix_width_sel_next = 2'b0;
+
 				    round_complete = 1'b1;
 			        NEXT_STATE = S0;
 			        round_start = 1'b1;
@@ -560,15 +561,24 @@ module aes_fsm_gen(input logic [1:0] mode,
 			    done = 1'b0;
 			    dec_key_gen = 1'b1;
 			    
-			    if(dec_key_schedule_round == roundAmount)
+			    if( (dec_key_schedule_round == roundAmount) & (radix_width_sel == 3'b100))
 			      begin
 			        round_start = 1'b1;
 			        NEXT_STATE = S16;
+			        radix_width_sel_next = 0;
+			      end
+			    else if (radix_width_sel == 3'b100)
+			      begin
+			        radix_width_sel_next = 0;
+			        NEXT_STATE = S15;
+			        dec_key_schedule_round_next = dec_key_schedule_round + 1;
+			        round_start = 1'b1;
 			      end
 			    else
 			      begin
+			        radix_width_sel_next = radix_width_sel + 1;
 			        NEXT_STATE = S15;
-			        dec_key_schedule_round_next = dec_key_schedule_round + 1;
+			        round_start = 1'b0;
 			      end
 			     			      
 			    end //S15
@@ -581,7 +591,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 				round = 4'h0;
 				done = 1'b0;
 				round_complete = 1'b0;
-				if(radix_width_sel == sub_round_amount)
+				if(radix_width_sel == 5'h10)
 				  begin
 				    radix_width_sel_next = 2'b0;
 				    round_complete = 1'b1;

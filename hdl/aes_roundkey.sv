@@ -8,6 +8,8 @@
 
 module aes_roundkey(input logic [3:0] RD,
 		    input logic [1:0] mode,
+		    input logic [4:0] width_sel,
+		    input logic clk, 
 		    input logic [127:0] prev_key,
 		    input logic [127:0] current_key,
 		    output logic [127:0] round_key);
@@ -17,8 +19,9 @@ module aes_roundkey(input logic [3:0] RD,
 		    
 		    //Intermediary logic
 		    logic [31:0] rotWord;
-		    logic [31:0] keyBox_out;
-		    
+		    logic [7:0] keyBox_out;
+		    logic [7:0] rotWord_mux;
+		    logic [31:0] keyReg_out;
 		    
 		    
 		    //Change the rotate disable depending on type of AES used
@@ -34,21 +37,44 @@ module aes_roundkey(input logic [3:0] RD,
 
 			//If we are in AES256 and it is first round then the round key is
 			//just current key
-		    
-		    
+
 		    //Circularly rotate the lowest word of the current key
 		    aesRotateWord rotate(.disableRotate(disableRotate),
 		    			  .inWord(current_key[31:0]),
 		    			  .rotWord(rotWord));
+
+			  
+            always_comb
+		      begin
+		    	case(width_sel)
+		    	  4'h0 : rotWord_mux = rotWord[7:0];
+		    	  4'h1 : rotWord_mux = rotWord[15:8];
+		    	  4'h2 : rotWord_mux = rotWord[23:16];
+		    	  4'h3 : rotWord_mux = rotWord[31:24];
+		    	  default : rotWord_mux = rotWord[7:0];
+		    	endcase
+		      end		    
+		    		    			  
+		   
 		    			  
 		    //Run the rotated word through the SBOX
-		    aes_sbox_word sbox(.in(rotWord),
+		    aes_sbox sbox(.in(rotWord_mux),
 		    		       .out(keyBox_out));
+
+            //We want this enabled for the first 4 sub-rounds
+            //e.g. 0000 0001 0010 0011
+
+            accumulation_reg_8 accum_reg(.in(keyBox_out),
+                               .clk(clk),
+                               .enable((~width_sel[4]) & (~width_sel[3]) & (~width_sel[2])),
+                               .out(keyReg_out));
+
+
 		    		       	       
 		    //Run the subsituted word through the key_XOR process
 		    aes_key_xor key_xor(.RD(RD),
 		    			.mode(mode),
-		    			.keyBox_out(keyBox_out),
+		    			.keyBox_out(keyReg_out),
 		    			.old_key(prev_key),
 		    			.new_key(round_key));
 		    			

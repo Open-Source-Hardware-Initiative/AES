@@ -141,12 +141,12 @@ module aes_rounddata(input logic [3:0] round,
 
         //Accumulation register for 32 bit radix
         //We want it every 4 sub-rounds, as that's when the mixcolumns we want
-        //is ready. So we need this register to function on : 3,7,11,15
-        //0011
-        //0111
-        //1011
-        //1111
-        accumulation_reg stageon_accum(.in(accumulation_in),.clk(clk),.enable(width_sel[0] & width_sel[1]),.out(accumulation_out));
+        //is ready. So we need this register to function on : 4,8,12,16
+        //00100
+        //01000
+        //01100
+        //10000
+        accumulation_reg stageon_accum(.in(accumulation_in),.clk(clk),.enable(~(width_sel[0]) & ~(width_sel[1])),.out(accumulation_out));
 
 
 		//Check for round 0 (RD = 0000)
@@ -205,16 +205,15 @@ module accumulation_reg_8(input logic [7:0] in,
                         input logic clk, enable, 
                         output logic [31:0] out);
                         
-    logic [31:0] out_prev;
-    logic [31:0] prev_shift;
-    
-    assign prev_shift = out_prev >> 8;
-    assign out = {in,prev_shift[23:0]};
+
     
     //Accumulate in 32 bit increments on clk
     always @(posedge clk)
       begin
-        out_prev <= out;   
+      if(enable == 1'b1)
+        begin
+            out <= {in,out[31:8]};
+        end
       end
 
 endmodule
@@ -228,15 +227,14 @@ module accumulation_reg(input logic [31:0] in,
     logic [127:0] out_prev;
     logic [127:0] prev_shift;
     
-    assign prev_shift = out_prev >> 32;
-    assign out = {in,prev_shift[95:0]};
+
     
     //Accumulate in 32 bit increments on clk
     always @(posedge clk)
       begin
         if(enable == 1'b1)
           begin
-            out_prev <= out;
+            out <= {in,out[127:32]};
           end
       end
 
