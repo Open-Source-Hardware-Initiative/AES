@@ -135,9 +135,6 @@ endmodule
 
 
 
-
-
-
 module accumulation_reg(input logic [31:0] in,
                         input logic clk, enable, 
                         output logic [127:0] out);
@@ -145,14 +142,15 @@ module accumulation_reg(input logic [31:0] in,
     logic [127:0] out_prev;
     logic [127:0] prev_shift;
     
-    assign prev_shift = out_prev >> 32;
-    assign out = {in,prev_shift[95:0]};
+
     
     //Accumulate in 32 bit increments on clk
     always @(posedge clk)
       begin
-        out_prev <= out;
-      
+        if(enable == 1'b1)
+          begin
+            out <= {in,out[127:32]};
+          end
       end
 
 endmodule
