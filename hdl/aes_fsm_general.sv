@@ -438,20 +438,28 @@ module aes_fsm_gen(input logic [1:0] mode,
 		            end
 		            
 		    			
-			//Loop State for generating reverse key schedule
 			S15 : begin
 			    done = 1'b0;
 			    dec_key_gen = 1'b1;
 			    
-			    if(dec_key_schedule_round == roundAmount)
+			    if( (dec_key_schedule_round == roundAmount) & (radix_width_sel == 3'b100))
 			      begin
 			        round_start = 1'b1;
 			        NEXT_STATE = S16;
+			        radix_width_sel_next = 0;
+			      end
+			    else if (radix_width_sel == 3'b100)
+			      begin
+			        radix_width_sel_next = 0;
+			        NEXT_STATE = S15;
+			        dec_key_schedule_round_next = dec_key_schedule_round + 1;
+			        round_start = 1'b1;
 			      end
 			    else
 			      begin
+			        radix_width_sel_next = radix_width_sel + 1;
 			        NEXT_STATE = S15;
-			        dec_key_schedule_round_next = dec_key_schedule_round + 1;
+			        round_start = 1'b0;
 			      end
 			     			      
 			    end //S15

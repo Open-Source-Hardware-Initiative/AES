@@ -24,7 +24,7 @@ module aes_inv_rounddata(input logic [3:0] round,
 		     input logic [127:0] round_key,
 		     input logic [127:0] data_in,
 		     input logic clk,
-		     input logic [1:0] width_sel, //selects sub-word for radix
+		     input logic [2:0] width_sel, //selects sub-word for radix
 		     output logic [127:0] data_out);
 
 		

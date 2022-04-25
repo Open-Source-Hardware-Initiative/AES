@@ -10,6 +10,8 @@
 
 module aes_roundkey_gen(input logic [1:0] mode, //00 for AES-128 01 for AES_192 10 for AES_256
 		       input logic [255:0] key_in,
+		       input logic [2:0] width_sel,
+		       input logic clk,
 		       input logic [3:0] round,
 		       output logic [127:0] round_key);
 		
@@ -38,9 +40,11 @@ module aes_roundkey_gen(input logic [1:0] mode, //00 for AES-128 01 for AES_192 
 
         assign prev_key = mode[1] ? key_in[255:128] : key_in[127:0];
 		//Calculate the round_key for round 1
-		aes_roundkey rk_1(.RD(round),
+		aes_roundkey_pipe rk_1(.RD(round),
 				  .mode(mode),
+				  .clk(clk),
 				  .prev_key(prev_key),
+				  .width_sel(width_sel),
 				  .current_key(key_in[127:0]),
 				  .round_key(round_key_internal));
 				  

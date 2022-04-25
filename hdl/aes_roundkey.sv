@@ -6,6 +6,83 @@
 
 
 
+module aes_roundkey_pipe(input logic [3:0] RD,
+		    input logic [1:0] mode,
+		    input logic [2:0] width_sel,
+		    input logic clk, 
+		    input logic [127:0] prev_key,
+		    input logic [127:0] current_key,
+		    output logic [127:0] round_key);
+		    
+		    
+		    logic disableRotate;
+		    
+		    //Intermediary logic
+		    logic [31:0] rotWord;
+		    logic [7:0] keyBox_out;
+		    logic [7:0] rotWord_mux;
+		    logic [31:0] keyReg_out;
+		    
+		    
+		    //Change the rotate disable depending on type of AES used
+		    always_comb
+		      begin
+		    	case(mode)
+		    	  2'b00 : disableRotate = 1'b0;
+		    	  2'b01 : disableRotate = 1'b0;
+		    	  2'b10 : disableRotate = RD[0];
+		    	  default : disableRotate = 1'b0;
+		    	endcase
+		      end
+
+			//If we are in AES256 and it is first round then the round key is
+			//just current key
+
+		    //Circularly rotate the lowest word of the current key
+		    aesRotateWord rotate(.disableRotate(disableRotate),
+		    			  .inWord(current_key[31:0]),
+		    			  .rotWord(rotWord));
+
+			  
+            always_comb
+		      begin
+		    	case(width_sel)
+		    	  3'h0 : rotWord_mux = rotWord[7:0];
+		    	  3'h1 : rotWord_mux = rotWord[15:8];
+		    	  3'h2 : rotWord_mux = rotWord[23:16];
+		    	  3'h3 : rotWord_mux = rotWord[31:24];
+		    	  default : rotWord_mux = rotWord[7:0];
+		    	endcase
+		      end		    
+		    		    			  
+		   
+		    			  
+		    //Run the rotated word through the SBOX
+		    aes_sbox sbox(.in(rotWord_mux),
+		    		       .out(keyBox_out));
+
+            //We want this enabled for the first 4 sub-rounds
+            //e.g. 0000 0001 0010 0011
+
+            accumulation_reg_8 accum_reg(.in(keyBox_out),
+                               .clk(clk),
+                               .enable(1'b1),
+                               .out(keyReg_out));
+
+
+		    		       	       
+		    //Run the subsituted word through the key_XOR process
+		    aes_key_xor key_xor(.RD(RD),
+		    			.mode(mode),
+		    			.keyBox_out(keyReg_out),
+		    			.old_key(prev_key),
+		    			.new_key(round_key));
+		    			
+endmodule
+
+
+
+
 module aes_roundkey(input logic [3:0] RD,
 		    input logic [1:0] mode,
 		    input logic [127:0] prev_key,
@@ -53,6 +130,12 @@ module aes_roundkey(input logic [3:0] RD,
 		    			.new_key(round_key));
 		    			
 endmodule
+
+
+
+
+
+
 
 
 
@@ -147,4 +230,21 @@ module aes_roundkey_128(input logic [1:0] mode, //00 for AES-128 01 for AES_192 
 		
 		assign round_key = round_key_internal;
 			
+endmodule
+
+module accumulation_reg_8(input logic [7:0] in,
+                        input logic clk, enable, 
+                        output logic [31:0] out);
+                        
+
+    
+    //Accumulate in 32 bit increments on clk
+    always @(posedge clk)
+      begin
+      if(enable == 1'b1)
+        begin
+            out <= {in,out[31:8]};
+        end
+      end
+
 endmodule

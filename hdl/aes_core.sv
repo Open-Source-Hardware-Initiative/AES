@@ -51,7 +51,7 @@ module aes_core_gen(input logic start,
 		    logic [3:0] dec_key_schedule_round;
 		    
 		    //Variable Radix
-		    logic [1:0] radix_width_sel;
+		    logic [2:0] radix_width_sel;
 		    
 		    //Set roundAmount based on mode
 		    //TODO THIS SHOULD BE MOVED TO THE FSM AND NOT DONE THIS WAY
@@ -77,6 +77,8 @@ module aes_core_gen(input logic start,
 		
 		    aes_roundkey_gen rk_test(.mode(mode),
 		                            .key_in(rk_in),
+		                            .clk(clk),
+		                            .width_sel(radix_width_sel),
 		                            .round(key_round),
 		                            .round_key(round_key));
 		
