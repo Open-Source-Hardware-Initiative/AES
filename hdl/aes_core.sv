@@ -5,6 +5,11 @@
 */
 
 
+
+
+
+
+
 module aes_core_gen(input logic start,
 		    input logic clk,
 		    input logic reset,
