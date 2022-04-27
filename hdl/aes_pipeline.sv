@@ -53,6 +53,8 @@ module aes_enc_pipe(input logic [1:0] mode,
      logic [127:0] round_data_reg [14:0];
      logic [127:0] round_data_out [14:0];
      
+     logic [127:0] data_out_d;
+     
      //Data valid propagation
      logic valid [14:0];
      
@@ -71,7 +73,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 1 key/data
     aes_rounddata data1(.round(4'h1),
                         .mode(mode),
-                        .round_key(round_key_out[1]),
+                        .round_key(round_key_reg[1][127:0]),
                         .data_in(round_data_reg[1]),
                         .data_out(round_data_out[1]));
                   
@@ -83,7 +85,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 2 key/data
     aes_rounddata data2(.round(4'h2),
                         .mode(mode),
-                        .round_key(round_key_out[2]),
+                        .round_key(round_key_reg[2][127:0]),
                         .data_in(round_data_reg[2]),
                         .data_out(round_data_out[2]));
                   
@@ -95,7 +97,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 3 key/data
     aes_rounddata data3(.round(4'h3),
                         .mode(mode),
-                        .round_key(round_key_out[3]),
+                        .round_key(round_key_reg[3][127:0]),
                         .data_in(round_data_reg[3]),
                         .data_out(round_data_out[3]));
                   
@@ -107,7 +109,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 4 key/data
     aes_rounddata data4(.round(4'h4),
                         .mode(mode),
-                        .round_key(round_key_out[4]),
+                        .round_key(round_key_reg[4][127:0]),
                         .data_in(round_data_reg[4]),
                         .data_out(round_data_out[4]));
                   
@@ -118,7 +120,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 5 key/data
     aes_rounddata data5(.round(4'h5),
                         .mode(mode),
-                        .round_key(round_key_out[5]),
+                        .round_key(round_key_reg[5][127:0]),
                         .data_in(round_data_reg[5]),
                         .data_out(round_data_out[5]));
                   
@@ -130,7 +132,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 6 key/data
     aes_rounddata data6(.round(4'h6),
                         .mode(mode),
-                        .round_key(round_key_out[6]),
+                        .round_key(round_key_reg[6][127:0]),
                         .data_in(round_data_reg[6]),
                         .data_out(round_data_out[6]));
                   
@@ -143,7 +145,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 7 key/data
     aes_rounddata data7(.round(4'h7),
                         .mode(mode),
-                        .round_key(round_key_out[7]),
+                        .round_key(round_key_reg[7][127:0]),
                         .data_in(round_data_reg[7]),
                         .data_out(round_data_out[7]));
                   
@@ -155,7 +157,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 8 key/data
     aes_rounddata data8(.round(4'h8),
                         .mode(mode),
-                        .round_key(round_key_out[8]),
+                        .round_key(round_key_reg[8][127:0]),
                         .data_in(round_data_reg[8]),
                         .data_out(round_data_out[8]));
                   
@@ -167,7 +169,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round 9 key/data
     aes_rounddata data9(.round(4'h9),
                         .mode(mode),
-                        .round_key(round_key_out[9]),
+                        .round_key(round_key_reg[9][127:0]),
                         .data_in(round_data_reg[9]),
                         .data_out(round_data_out[9]));
                   
@@ -181,7 +183,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round A key/data
     aes_rounddata dataA(.round(4'hA),
                         .mode(mode),
-                        .round_key(round_key_out[4'hA]),
+                        .round_key(round_key_reg[4'hA][127:0]),
                         .data_in(round_data_reg[4'hA]),
                         .data_out(round_data_out[4'hA]));
                   
@@ -194,7 +196,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round B key/data
     aes_rounddata dataB(.round(4'hB),
                         .mode(mode),
-                        .round_key(round_key_out[4'hB]),
+                        .round_key(round_key_reg[4'hB][127:0]),
                         .data_in(round_data_reg[4'hB]),
                         .data_out(round_data_out[4'hB]));
                   
@@ -207,7 +209,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round C key/data
     aes_rounddata dataC(.round(4'hC),
                         .mode(mode),
-                        .round_key(round_key_out[4'hC]),
+                        .round_key(round_key_reg[4'hC][127:0]),
                         .data_in(round_data_reg[4'hC]),
                         .data_out(round_data_out[4'hC]));
                   
@@ -220,7 +222,7 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round D key/data
     aes_rounddata dataD(.round(4'hD),
                         .mode(mode),
-                        .round_key(round_key_out[4'hD]),
+                        .round_key(round_key_reg[4'hD][127:0]),
                         .data_in(round_data_reg[4'hD]),
                         .data_out(round_data_out[4'hD]));
                   
@@ -232,9 +234,9 @@ module aes_enc_pipe(input logic [1:0] mode,
     //Round E key/data
     aes_rounddata dataE(.round(4'hE),
                         .mode(mode),
-                        .round_key(round_key_out[4'hE]),
+                        .round_key(round_key_reg[4'hE][127:0]),
                         .data_in(round_data_reg[4'hE]),
-                        .data_out(data_out));
+                        .data_out(data_out_d));
                   
     aes_roundkey_gen keyE(.mode(mode),
 		                  .key_in(round_key_reg[4'hD]),
@@ -259,8 +261,11 @@ module aes_enc_pipe(input logic [1:0] mode,
             valid[0] <= 1'b0;
           end
       
-      
-        round_data_reg[1] <= round_data_out[0];
+        if(valid[0] == 1'b1)
+          begin
+            round_data_reg[1] <= round_data_out[0];
+          end
+        
         round_data_reg[2] <= round_data_out[1];
         round_data_reg[3] <= round_data_out[2];
         round_data_reg[4] <= round_data_out[3];
@@ -276,6 +281,11 @@ module aes_enc_pipe(input logic [1:0] mode,
         round_data_reg[14] <= round_data_out[13];
         
         
+        if(valid[12] == 1'b1)
+          begin
+            data_out <= data_out_d;
+          end
+        
         
         round_key_reg[2] <= {round_key_reg[1][127:0],round_key_out[2]};
         round_key_reg[3] <= {round_key_reg[2][127:0],round_key_out[3]};
@@ -290,6 +300,7 @@ module aes_enc_pipe(input logic [1:0] mode,
         round_key_reg[12] <= {round_key_reg[11][127:0],round_key_out[12]};
         round_key_reg[13] <= {round_key_reg[12][127:0],round_key_out[13]};
         round_key_reg[14] <= {round_key_reg[13][127:0],round_key_out[14]};
+        
         
         valid[1] <= valid[0];
         valid[2] <= valid[1];

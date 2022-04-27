@@ -28,7 +28,7 @@ module aes_core_gen_tb();
 	logic [511:0] vec_mem [100000:0];
 	integer i;
 	//Number of vectors
-	integer vecnum = 10;
+	integer vecnum = 10000;
 	
 	aes_core_pipe dut(.start(start),
 			 .clk(clk),
@@ -65,13 +65,13 @@ module aes_core_gen_tb();
           if(~enc_dec)
             begin //Finish Encipher
             
-                //Check for correct enciphered plaintext
+                /*Check for correct enciphered plaintext
                 if(data_out != ciphertext)
                   begin
                    $display("Test failed with vectors :\nPlaintext : %h\nKey :%h\nCiphertext :%h\nExpected Ciphertext : %h",plaintext,key,data_out,ciphertext);
                    $stop;
                   end
-            
+                */
 
 
             end
@@ -87,11 +87,16 @@ module aes_core_gen_tb();
         if(i % 100 == 0)
           begin
           $display("Completed %d vectors with no errors",i);
+          
           end
           
           
           
-                init_done = 0;
+
+	  
+	  end
+	  
+	            init_done = 0;
                 i = i + 1;
                 plaintext = vec_mem[i][127:0];
                 ciphertext = vec_mem[i][255:128];
@@ -108,11 +113,11 @@ module aes_core_gen_tb();
 		        enc_dec = 1'b0; //0 for encipher
 		        mode = 2'h2;
 		        
-		        #10
+		        #5
 		        start = 1'b0;
 		        init_done = 1;
 	  
-	  end
+	  
 	  end
 	
 	
