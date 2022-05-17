@@ -1,0 +1,7 @@
+aes_rounddata_variants.sv
+aes_inv_rounddata_variants.sv
+aes_roundkey_variants.sv
+aes_*permutations.sv
+gm2_sbox_lut.sv
+gm3_sbox_lut.sv
+scripts/
