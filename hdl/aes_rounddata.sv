@@ -14,6 +14,9 @@
 *	    to skip mixcolumns or everything except ark.
 */
 
+
+
+
 module aes_rounddata(input logic [3:0] round,
 		     input logic [1:0] mode, //00 for 128 01 for 192 and 10 for 256
 		     input logic [127:0] round_key,
@@ -91,6 +94,7 @@ module aes_rounddata(input logic [3:0] round,
 		//Set ark_in according to mode NOTE: defaults to 256
 		assign ark_in_mode = AES_128_MODE ? ark_in_128 : (AES_192_MODE ? ark_in_192 : ark_in_256);
 		assign ark_in = r0_flag ? data_in : ark_in_mode;
+		
 		//AES Add Round Key operation
 		aes_addroundkey ark(.data(ark_in),
 				    .round_key(round_key),

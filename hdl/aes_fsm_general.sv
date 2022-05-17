@@ -11,8 +11,9 @@ module aes_fsm_gen(input logic [1:0] mode,
 		   input logic reset,
 		   input logic start, //Should be asserted when all info is provided
 		   input logic enc_dec,
-		   output logic [3:0] round,
-		   output logic enc_dec_reg,
+		   input logic [3:0] roundAmount,
+		   output logic [3:0] round, dec_key_schedule_round, 
+		   output logic enc_dec_reg, dec_key_gen,
 		   output logic done);
 		   
 		   
@@ -21,6 +22,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 		logic start_prev;
 		//Register for mode so we can make sure it is the same for the whole operation
 		logic [1:0] mode_reg;
+        logic [3:0] dec_key_schedule_round_next;
 		
 		parameter [3:0]
 		S0=4'h0, S1=4'h1, S2=4'h2, S3=4'h3, S4=4'h4, S5=4'h5,
@@ -38,6 +40,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 			  begin
 				CURRENT_STATE <= NEXT_STATE;
 				start_prev <= start;
+				dec_key_schedule_round <= dec_key_schedule_round_next;
 			  end
 		  end
 		  
@@ -54,7 +57,17 @@ module aes_fsm_gen(input logic [1:0] mode,
 				
 				if(start)
 				  begin
-				    NEXT_STATE = S1;
+				    if(enc_dec_reg == 1'b0)
+				      begin
+				        NEXT_STATE = S1;
+				        dec_key_gen = 1'b0;
+				        dec_key_schedule_round_next = 4'h0;
+				      end
+				    else
+				      begin
+				        NEXT_STATE = S15;
+				        dec_key_schedule_round_next = 4'h0;
+				      end
 				  end
 				else
 				  begin
@@ -64,6 +77,7 @@ module aes_fsm_gen(input logic [1:0] mode,
 			
 			//Begin State 1 (Round 1)
 			S1 : begin
+			    dec_key_gen = 1'b0;
 				round = 4'h1;
 				done = 1'b0;
 				NEXT_STATE = S2;
@@ -142,12 +156,16 @@ module aes_fsm_gen(input logic [1:0] mode,
 				  end
 			end //S10
 			
+			
+			//Round 11
 			S11 : begin
 				round = 4'hB;
 				done = 1'b0;
 				NEXT_STATE = S12;
 			     end //S11
 				
+				
+		    //Round 12
 			S12 : begin
 				round = 4'hC;
 				//Last Round for AES192
@@ -164,20 +182,43 @@ module aes_fsm_gen(input logic [1:0] mode,
 				  end
 			end //S12
 			
+			//Round 13
 			S13 : begin
 				round = 4'hD;
 				done = 1'b0;
 				NEXT_STATE = S14;
 			      end
 
-		      S14 : begin
+
+            //Round 14
+		    S14 : begin
 		      		//Last round for AES256
 		      	        round = 4'hE;
 		      	        done = 1'b1;
 		      	        NEXT_STATE = S0;
 		            end
-			
+		            
+		    			
+			//Loop State for generating reverse key schedule
+			S15 : begin
+			    done = 1'b0;
+			    dec_key_gen = 1'b1;
+			    
+			    if(dec_key_schedule_round == roundAmount)
+			      begin
+			        NEXT_STATE = S1;
+			      end
+			    else
+			      begin
+			        NEXT_STATE = S15;
+			        dec_key_schedule_round_next = dec_key_schedule_round + 1;
+			      end
+			    end
+			      
+			      
 			endcase;
+			
+
 endmodule
 		
 			

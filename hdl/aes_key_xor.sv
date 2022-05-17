@@ -81,13 +81,13 @@ module rcon_lut_128(input logic [3:0] RD,
 				  8'h09 : rcon_out = 8'h1B;
 				  8'h0A : rcon_out = 8'h36;
 				  default : rcon_out = 8'h00;
-
-				
-				
-				
 				endcase
 			  
 			  
 			  end
 			
-endmodule //rcon_lut_128	
+endmodule //rcon_lut_128
+
+
+
+	

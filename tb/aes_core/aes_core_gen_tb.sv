@@ -3,6 +3,8 @@
 * Purpose : This file contains the testbench for the generalized AES core
 */
 
+
+
 module aes_core_gen_tb();
 
 	logic [127:0] plaintext = 128'h6bc1bee22e409f96e93d7e117393172a;
@@ -39,7 +41,7 @@ module aes_core_gen_tb();
 	logic [255:0] key;
 	logic [127:0] data_in;
 	logic [127:0] data_out;
-	
+	logic init_done;
 	
 	aes_core_gen dut(.start(start),
 			 .clk(clk),
