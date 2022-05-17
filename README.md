@@ -44,6 +44,11 @@ This repository contains an open source AES design as presented in:
 
 R. L. Swann and J. E. Stine, "A Reconfigurable Architecture for Improvement and Optimization of Advanced Encryption Standard Hardware, " 55th Annual Asilomar Conference on Signals, Systems, and Computers, 2021 (in press).
 
+and
+
+R. Swann and J. E. Stine, "Evaluation of a Modular Approach to AES Hardware Architecture and Optimization" Submitted to Journal of Signal Processing Systems, 2022.
+
 
 ## Referenced Projects
 https://github.com/secworks/aes
+
