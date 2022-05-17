@@ -3,15 +3,6 @@ This directory contains the HDL (Hardware Descriptive Language) for the design.
 Feel free to ask any questions here on github. 
 
 
-#Modules
-
-| Module Name | Module Purpose |
-
-# Purpose
-This directory contains the HDL (Hardware Descriptive Language) for the design.
-Feel free to ask any questions here on github. 
-
-
 # Modules
 
 
