@@ -11,8 +11,8 @@
 */
 `define alchemy_family_aes_sbox "aes_sbox_byte"
 `define alchemy_family_aes_sbox_g115 "aes_sbox_byte"
-`define alchemy_family_aes_sbox_g113 "aes_sbox_bye"
-`define alchemy_family_aes_sbox_g128 "aes_sbox_bye"
+`define alchemy_family_aes_sbox_g113 "aes_sbox_byte"
+`define alchemy_family_aes_sbox_g128 "aes_sbox_byte"
 
 module aes_sbox(input logic [7:0] in,
 		output logic [7:0] out);
