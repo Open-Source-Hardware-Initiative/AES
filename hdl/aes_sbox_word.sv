@@ -3,6 +3,7 @@
 * Purpose : This file contains 4 sets of the Rijndael SBOX so a whole word
 *	    can be looked up simultaneously
 */
+`define alchemy_family_aes_sbox_word "aes_sbox_word"
 
 
 module aes_sbox_word(input logic [31:0] in,

@@ -3,6 +3,7 @@
 * Purpose : This module contains a base design for a
 *	    generalized AES core
 */
+`define alchemy_family_aes_core_gen "aes_core"
 
 
 module aes_core_gen(input logic start,

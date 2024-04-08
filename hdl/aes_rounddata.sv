@@ -15,6 +15,7 @@
 */
 
 
+`define alchemy_family_aes_rounddata "aes_rounddata"
 
 
 module aes_rounddata(input logic [3:0] round,

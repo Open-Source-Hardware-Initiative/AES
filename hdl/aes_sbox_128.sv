@@ -4,6 +4,10 @@
 	    which is comprised of 4x 32 bit substitution boxes
 */
 
+
+`define alchemy_family_aes_sbox_128 "aes_sbox_128"
+
+
 module aes_sbox_128(input logic [127:0] in,
 		     output logic [127:0] out);
 		     
