@@ -1,3 +1,5 @@
+`define alchemy_family_aes_inv_sbox_128 "aes_inv_sbox_128"
+
 /*
 * Contact : swann.l.ryan@gmail.com
 * Purpose : This file contains a 128 bit inverse substitution box

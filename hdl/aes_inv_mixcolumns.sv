@@ -1,3 +1,4 @@
+`define alchemy_family_aes_inv_mixcols "aes_inv_mixcols"
 /*
 * Contact : swann.l.ryan@gmail.com
 * Purpose : This file contains the inverted mix columns function

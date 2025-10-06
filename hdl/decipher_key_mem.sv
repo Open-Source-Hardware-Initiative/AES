@@ -1,3 +1,5 @@
+`define alchemy_family_decipher_key_mem "decipher_key_mem"
+
 /*
 * Contact : swann.l.ryan@gmail.com
 * Purpose : This module contains a memory for the decipher

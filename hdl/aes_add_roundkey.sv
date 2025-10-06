@@ -1,3 +1,5 @@
+`define alchemy_family_aes_addroundkey "aes_addroundkey"
+
 /*
 * Contact : swann.l.ryan@gmail.com
 * Purpose : This file contains addroundkey which is the last step

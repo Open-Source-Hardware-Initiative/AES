@@ -1,3 +1,5 @@
+`define alchemy_family_aes_inv_shiftrow "aes_inv_shiftrow"
+
 /*
 * Contact : swann.l.ryan@gmail.com
 * Purpose : This file contains aes_shiftrow. The first module

@@ -1,3 +1,4 @@
+
 /*
 * Contact : swann.l.ryan@gmail.com
 * Purpose : This file contains the "mix columns" operation for AES.
@@ -12,6 +13,7 @@
 *I used the secworks repo for reference here as it gets a little mathy
 */
 
+`define alchemy_family_aes_mixcolumns "aes_mixcolumns"
 
 module aes_mixcolumns(data, mixedcols);
 

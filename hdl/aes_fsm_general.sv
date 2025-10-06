@@ -1,3 +1,5 @@
+`define alchemy_family_aes_fsm_gen "aes_fsm_gen"
+
 /*
 * Contact : swann.l.ryan@gmail.com
 * Purpose : This module contains a generalized version

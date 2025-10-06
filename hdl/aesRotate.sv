@@ -1,3 +1,5 @@
+`define alchemy_family_aesRotateWord "aes_rotate_word"
+
 /*
 * Contact : swann.l.ryan@gmail.com
 * Purpose : This file contains the AES single word rotate operation. Basically
